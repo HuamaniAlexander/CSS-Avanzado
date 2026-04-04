@@ -1,0 +1,26 @@
+.servicios{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 1.25rem; 
+}
+
+.card{
+    background: #eee;
+    padding: 1.25rem;
+    text-align: center;
+    flex: 1 1 calc(33.333% - 1.25rem);
+}
+
+@media (max-width: 768px) {
+    .card{
+        flex: 1 1 calc(50% - 20px);
+    }
+    
+}
+
+@media (max-width: 480px) {
+    .card{
+        flex: 1 1 100%;
+    }
+}
