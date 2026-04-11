@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aprende Flexbox</title>
+    <link rel="stylesheet" href="../CSS/style.css" />
+    <link rel="stylesheet" href="../CSS/flexbox.css" />
+</head>
+
+<body>
+
+    <!-- ══ ENCABEZADO ══════════════════════════════════ -->
+    <header>
+        <div class="badge"><a href="index.html" class="link-grid">Tutorial Visual</a></div>
+        <h1>CSS <span>Flexbox</span></h1>
+        <p>Aprende a alinear y distribuir elementos en una sola dirección (fila o columna) con ejemplos visuales.</p>
+    </header>
+
+
+    <!-- ══ 1. ¿QUÉ ES FLEXBOX? ════════════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 01</p>
+        <h2>¿Qué es Flexbox?</h2>
+
+        <div class="concept-box">
+            Flexbox es un sistema de <strong>layout unidimensional</strong>: trabaja en una fila <em>o</em> una columna
+            a la vez.<br>
+            Se activa con <strong>display: flex</strong> en el contenedor padre.<br>
+            Ideal para alinear elementos dentro de un componente: nav, tarjetas, botones, formularios.
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.contenedor</span> {<br>
+            &nbsp;&nbsp;<span class="prop">display</span>: <span class="val">flex</span>;<br>
+            &nbsp;&nbsp;<span class="prop">flex-direction</span>: <span class="val">row</span>; <span class="com">/* por
+                defecto */</span><br>
+            &nbsp;&nbsp;<span class="prop">gap</span>: <span class="val">10px</span>;<br>
+            }
+        </div>
+
+        <p class="demo-label">▶ flex-direction: row (horizontal)</p>
+        <div class="flex-box demo-row">
+            <div class="flex-item"><b>1</b>Item</div>
+            <div class="flex-item"><b>2</b>Item</div>
+            <div class="flex-item"><b>3</b>Item</div>
+        </div>
+
+        <p class="demo-label">▶ flex-direction: column (vertical)</p>
+        <div class="flex-box demo-col" style="max-width:200px;">
+            <div class="flex-item"><b>1</b>Item</div>
+            <div class="flex-item"><b>2</b>Item</div>
+            <div class="flex-item"><b>3</b>Item</div>
+        </div>
+    </section>
+
+
+    <!-- ══ 2. JUSTIFY-CONTENT ════════════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 02</p>
+        <h2>justify-content</h2>
+
+        <div class="concept-box">
+            Controla cómo se distribuyen los hijos en el <strong>eje principal</strong> (horizontal si flex-direction es
+            row).<br>
+            No afecta el tamaño de los elementos, solo su <strong>posición y espacio entre ellos</strong>.
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.flex</span> { <span class="prop">justify-content</span>: <span
+                class="val">flex-start</span> | <span class="val">center</span> | <span class="val">flex-end</span> |
+            <span class="val">space-between</span> | <span class="val">space-around</span> | <span
+                class="val">space-evenly</span> }
+        </div>
+
+        <div class="mini-box">
+            <p class="jc-label">flex-start (por defecto)</p>
+            <div class="demo-start">
+                <div class="mini-item">A</div>
+                <div class="mini-item">B</div>
+                <div class="mini-item">C</div>
+            </div>
+        </div>
+
+        <div class="mini-box">
+            <p class="jc-label">center</p>
+            <div class="demo-center">
+                <div class="mini-item">A</div>
+                <div class="mini-item">B</div>
+                <div class="mini-item">C</div>
+            </div>
+        </div>
+
+        <div class="mini-box">
+            <p class="jc-label">flex-end</p>
+            <div class="demo-end">
+                <div class="mini-item">A</div>
+                <div class="mini-item">B</div>
+                <div class="mini-item">C</div>
+            </div>
+        </div>
+
+        <div class="mini-box">
+            <p class="jc-label">space-between</p>
+            <div class="demo-between">
+                <div class="mini-item">A</div>
+                <div class="mini-item">B</div>
+                <div class="mini-item">C</div>
+            </div>
+        </div>
+
+        <div class="mini-box">
+            <p class="jc-label">space-around</p>
+            <div class="demo-around">
+                <div class="mini-item">A</div>
+                <div class="mini-item">B</div>
+                <div class="mini-item">C</div>
+            </div>
+        </div>
+
+        <div class="mini-box">
+            <p class="jc-label">space-evenly</p>
+            <div class="demo-evenly">
+                <div class="mini-item">A</div>
+                <div class="mini-item">B</div>
+                <div class="mini-item">C</div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- ══ 3. ALIGN-ITEMS ════════════════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 03</p>
+        <h2>align-items</h2>
+
+        <div class="concept-box">
+            Controla la alineación en el <strong>eje secundario</strong> (vertical si flex-direction es row).<br>
+            Los elementos pueden alinearse al inicio, centro, final, o <strong>estirarse</strong> para ocupar todo el
+            alto.
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.flex</span> { <span class="prop">align-items</span>: <span class="val">flex-start</span>
+            | <span class="val">center</span> | <span class="val">flex-end</span> | <span class="val">stretch</span> |
+            <span class="val">baseline</span> }
+        </div>
+
+        <p class="demo-label">▶ flex-start</p>
+        <div class="flex-box demo-align demo-align-start">
+            <div class="flex-item tall"><b>A</b>tall</div>
+            <div class="flex-item short"><b>B</b>short</div>
+            <div class="flex-item tall"><b>C</b>tall</div>
+        </div>
+
+        <p class="demo-label">▶ center</p>
+        <div class="flex-box demo-align demo-align-center">
+            <div class="flex-item tall"><b>A</b>tall</div>
+            <div class="flex-item short"><b>B</b>short</div>
+            <div class="flex-item tall"><b>C</b>tall</div>
+        </div>
+
+        <p class="demo-label">▶ flex-end</p>
+        <div class="flex-box demo-align demo-align-end">
+            <div class="flex-item tall"><b>A</b>tall</div>
+            <div class="flex-item short"><b>B</b>short</div>
+            <div class="flex-item tall"><b>C</b>tall</div>
+        </div>
+
+        <p class="demo-label">▶ stretch (los hijos llenan todo el alto)</p>
+        <div class="flex-box demo-align demo-align-stretch">
+            <div class="flex-item" style="height:auto"><b>A</b>stretch</div>
+            <div class="flex-item" style="height:auto"><b>B</b>stretch</div>
+            <div class="flex-item" style="height:auto"><b>C</b>stretch</div>
+        </div>
+    </section>
+
+
+    <!-- ══ 4. FLEX-GROW / SHRINK / BASIS ═════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 04</p>
+        <h2>flex-grow, flex-shrink, flex-basis</h2>
+
+        <div class="concept-box">
+            Estas tres propiedades controlan cómo <strong>crece</strong>, <strong>encoge</strong> y qué <strong>tamaño
+                base</strong> tiene cada hijo.<br>
+            Se pueden abreviar con <strong>flex: grow shrink basis</strong>.<br>
+            <strong>flex: 1</strong> es el atajo más usado: el elemento toma todo el espacio disponible.
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.hijo-a</span> { <span class="prop">flex-grow</span>: <span class="val">0</span>; } <span
+                class="com">/* No crece */</span><br>
+            <span class="sel">.hijo-b</span> { <span class="prop">flex-grow</span>: <span class="val">1</span>; } <span
+                class="com">/* Toma 1 parte del espacio libre */</span><br>
+            <span class="sel">.hijo-c</span> { <span class="prop">flex-grow</span>: <span class="val">2</span>; } <span
+                class="com">/* Toma 2 partes (el doble que B) */</span>
+        </div>
+
+        <p class="demo-label">▶ Resultado — observa cómo se reparte el espacio</p>
+        <div class="flex-box demo-grow">
+            <div class="flex-item grow-0"><b>A</b>grow: 0<br><small>tamaño fijo</small></div>
+            <div class="flex-item grow-1"><b>B</b>grow: 1<br><small>1 parte</small></div>
+            <div class="flex-item grow-2"><b>C</b>grow: 2<br><small>2 partes</small></div>
+        </div>
+
+        <div class="props-row">
+            <span class="prop-pill">flex: 1 → flex: 1 1 0%</span>
+            <span class="prop-pill">flex: auto → flex: 1 1 auto</span>
+            <span class="prop-pill">flex: none → flex: 0 0 auto</span>
+        </div>
+    </section>
+
+
+    <!-- ══ 5. FLEX-WRAP ═══════════════════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 05</p>
+        <h2>flex-wrap</h2>
+
+        <div class="concept-box">
+            Por defecto los hijos no saltan de línea (<strong>nowrap</strong>). Con <strong>flex-wrap: wrap</strong>,
+            cuando no caben,<br>
+            los elementos bajan a la siguiente fila automáticamente. Muy útil para grillas simples.
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.contenedor</span> {<br>
+            &nbsp;&nbsp;<span class="prop">display</span>: <span class="val">flex</span>;<br>
+            &nbsp;&nbsp;<span class="prop">flex-wrap</span>: <span class="val">wrap</span>;<br>
+            &nbsp;&nbsp;<span class="prop">gap</span>: <span class="val">10px</span>;<br>
+            }<br><br>
+            <span class="sel">.hijo</span> { <span class="prop">flex</span>: <span class="val">0 0 140px</span>; } <span
+                class="com">/* ancho fijo de 140px */</span>
+        </div>
+
+        <p class="demo-label">▶ Achica la ventana y ve cómo los items saltan de fila</p>
+        <div class="flex-box demo-wrap">
+            <div class="wrap-item">Item 1</div>
+            <div class="wrap-item">Item 2</div>
+            <div class="wrap-item">Item 3</div>
+            <div class="wrap-item">Item 4</div>
+            <div class="wrap-item">Item 5</div>
+            <div class="wrap-item">Item 6</div>
+            <div class="wrap-item">Item 7</div>
+            <div class="wrap-item">Item 8</div>
+        </div>
+    </section>
+
+    <footer>FLEXBOX TUTORIAL · REVISÁ GRID.HTML PARA VER LAYOUTS 2D</footer>
+
+</body>
+
+</html>
