@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Aprende CSS Grid</title>
+    <link rel="stylesheet" href="../CSS-/style.css" />
+    <link rel="stylesheet" href="../CSS-/grid.css"/>
+</head>
+
+<body>
+
+    <!-- ══ ENCABEZADO ══════════════════════════════════ -->
+    <header>
+        <div class="badge"><a href="index.html" class="link-grid">Tutorial Visual</a></div>
+        <h1>CSS <span>Grid</span></h1>
+        <p>Aprende a diseñar layouts en 2 dimensiones usando filas y columnas con ejemplos interactivos.</p>
+    </header>
+
+
+    <!-- ══ 1. ¿QUÉ ES GRID? ════════════════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 01</p>
+        <h2>¿Qué es CSS Grid?</h2>
+
+        <div class="concept-box">
+            CSS Grid es un sistema de <strong>layout bidimensional</strong>: controla filas <em>y</em> columnas al mismo
+            tiempo.<br>
+            Se activa con <strong>display: grid</strong> en el contenedor padre.<br>
+            Ideal para estructuras de página completa (header, sidebar, main, footer).
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.contenedor</span> {<br>
+            &nbsp;&nbsp;<span class="prop">display</span>: <span class="val">grid</span>;<br>
+            &nbsp;&nbsp;<span class="prop">grid-template-columns</span>: <span class="val">repeat(3, 1fr)</span>;<br>
+            &nbsp;&nbsp;<span class="prop">gap</span>: <span class="val">12px</span>;<br>
+            }
+        </div>
+
+        <p class="demo-label">▶ Resultado — 3 columnas iguales (1fr cada una)</p>
+        <div class="grid-basic">
+            <div class="grid-cell"><span class="num">1</span>Item 1</div>
+            <div class="grid-cell"><span class="num">2</span>Item 2</div>
+            <div class="grid-cell"><span class="num">3</span>Item 3</div>
+            <div class="grid-cell"><span class="num">4</span>Item 4</div>
+            <div class="grid-cell"><span class="num">5</span>Item 5</div>
+            <div class="grid-cell"><span class="num">6</span>Item 6</div>
+        </div>
+
+        <div class="props-row">
+            <span class="prop-pill">1fr = fracción libre</span>
+            <span class="prop-pill">repeat(N, tamaño)</span>
+            <span class="prop-pill">gap = espacio entre celdas</span>
+        </div>
+    </section>
+
+
+    <!-- ══ 2. GRID-TEMPLATE-AREAS ══════════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 02</p>
+        <h2>grid-template-areas</h2>
+
+        <div class="concept-box">
+            Nombra zonas del grid con texto, como un mapa visual.<br>
+            Cada hijo usa <strong>grid-area: nombre</strong> para ubicarse en esa zona.<br>
+            Perfecta para maquetas de página: header, sidebar, main, footer.
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.contenedor</span> {<br>
+            &nbsp;&nbsp;<span class="prop">display</span>: <span class="val">grid</span>;<br>
+            &nbsp;&nbsp;<span class="prop">grid-template-areas</span>:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="val">"header header header"</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="val">"sidebar main main"</span><br>
+            &nbsp;&nbsp;&nbsp;&nbsp;<span class="val">"footer footer footer"</span>;<br>
+            &nbsp;&nbsp;<span class="prop">grid-template-columns</span>: <span class="val">200px 1fr 1fr</span>;<br>
+            }<br><br>
+            <span class="sel">.header</span> { <span class="prop">grid-area</span>: <span class="val">header</span>;
+            }<br>
+            <span class="sel">.sidebar</span> { <span class="prop">grid-area</span>: <span class="val">sidebar</span>;
+            }<br>
+            <span class="sel">.main</span> { <span class="prop">grid-area</span>: <span class="val">main</span>; }<br>
+            <span class="sel">.footer</span> { <span class="prop">grid-area</span>: <span class="val">footer</span>; }
+        </div>
+
+        <p class="demo-label">▶ Resultado — Layout de página completa</p>
+        <div class="grid-areas">
+            <div class="area-cell area-header">HEADER <small>grid-area: header</small></div>
+            <div class="area-cell area-sidebar">SIDEBAR <small>grid-area: sidebar</small></div>
+            <div class="area-cell area-main">MAIN CONTENT <small>grid-area: main</small></div>
+            <div class="area-cell area-footer">FOOTER <small>grid-area: footer</small></div>
+        </div>
+    </section>
+
+
+    <!-- ══ 3. COLUMN-SPAN / ROW-SPAN ═══════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 03</p>
+        <h2>grid-column / grid-row span</h2>
+
+        <div class="concept-box">
+            Un elemento puede <strong>abarcar varias columnas o filas</strong> con <strong>grid-column: span N</strong>
+            o <strong>grid-row: span N</strong>.<br>
+            Úsalo para destacar un elemento importante dentro del grid.
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="com">/* Ocupa 2 columnas */</span><br>
+            <span class="sel">.destacado</span> { <span class="prop">grid-column</span>: <span class="val">span
+                2</span>; }<br><br>
+            <span class="com">/* Ocupa 2 filas */</span><br>
+            <span class="sel">.alto</span> { <span class="prop">grid-row</span>: <span class="val">span 2</span>;
+            }<br><br>
+            <span class="com">/* Ocupa 2×2 */</span><br>
+            <span class="sel">.grande</span> { <span class="prop">grid-column</span>: <span class="val">span 2</span>;
+            <span class="prop">grid-row</span>: <span class="val">span 2</span>; }
+        </div>
+
+        <p class="demo-label">▶ Resultado — 4 columnas, distintos spans</p>
+        <div class="grid-span">
+            <div class="span-cell span-col2">span 2 cols</div>
+            <div class="span-cell span-row2">span<br>2 rows</div>
+            <div class="span-cell">normal</div>
+            <div class="span-cell span-both">span 2×2</div>
+            <div class="span-cell">normal</div>
+            <div class="span-cell">normal</div>
+            <div class="span-cell">normal</div>
+            <div class="span-cell">normal</div>
+        </div>
+    </section>
+
+
+    <!-- ══ 4. AUTO-FILL RESPONSIVE ═════════════════════ -->
+    <section class="section">
+        <p class="section-title">Concepto 04</p>
+        <h2>auto-fill + minmax (Responsive sin media queries)</h2>
+
+        <div class="concept-box">
+            <strong>repeat(auto-fill, minmax(130px, 1fr))</strong> crea tantas columnas como quepan,<br>
+            con un mínimo de 130px. El grid se adapta solo al ancho del contenedor. ¡Sin media queries!
+        </div>
+
+        <div class="code-block">
+            <span class="label">CSS</span>
+            <span class="sel">.grid</span> {<br>
+            &nbsp;&nbsp;<span class="prop">display</span>: <span class="val">grid</span>;<br>
+            &nbsp;&nbsp;<span class="prop">grid-template-columns</span>: <span class="val">repeat(auto-fill,
+                minmax(130px, 1fr))</span>;<br>
+            &nbsp;&nbsp;<span class="prop">gap</span>: <span class="val">12px</span>;<br>
+            }
+        </div>
+
+        <p class="demo-label">▶ Resultado — Cambia el tamaño de la ventana y observa</p>
+        <div class="grid-auto">
+            <div class="grid-cell"><span class="num">A</span>Card</div>
+            <div class="grid-cell"><span class="num">B</span>Card</div>
+            <div class="grid-cell"><span class="num">C</span>Card</div>
+            <div class="grid-cell"><span class="num">D</span>Card</div>
+            <div class="grid-cell"><span class="num">E</span>Card</div>
+            <div class="grid-cell"><span class="num">F</span>Card</div>
+            <div class="grid-cell"><span class="num">G</span>Card</div>
+            <div class="grid-cell"><span class="num">H</span>Card</div>
+        </div>
+
+        <div class="props-row">
+            <span class="prop-pill">auto-fill: llena con columnas</span>
+            <span class="prop-pill">auto-fit: estira las existentes</span>
+            <span class="prop-pill">minmax(min, max)</span>
+        </div>
+    </section>
+
+    <footer>CSS GRID TUTORIAL · ABRE FLEXBOX.HTML PARA CONTINUAR</footer>
+
+</body>
+
+</html>
