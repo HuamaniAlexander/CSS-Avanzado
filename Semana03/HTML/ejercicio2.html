@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ejercicio 2 — Grid Column & Row Span</title>
+    <link rel="stylesheet" href="../CSS/ejercicio2.css" />
+</head>
+
+<body>
+
+    <div class="ex-header">
+        <span class="ex-badge">EJERCICIO 02 · CSS GRID</span>
+        <h1>Elemento Publicidad</h1>
+        <p>
+            grid-column: 2 / -1 &nbsp;·&nbsp; grid-row: span 2<br>
+            El elemento empieza en la columna 2 y se extiende hasta la última línea. Ocupa 2 filas.
+        </p>
+    </div>
+
+    <!-- ── Bloque de código ── -->
+    <p class="code-label">CSS aplicado al elemento .publicidad</p>
+    <div class="code-block">
+        <span class="com">/* El contenedor: 4 columnas iguales */</span><br>
+        <span class="sel">.grid-container</span> {<br>
+        &nbsp;&nbsp;<span class="prop">display</span>: <span class="val">grid</span>;<br>
+        &nbsp;&nbsp;<span class="prop">grid-template-columns</span>: <span class="val">repeat(4, 1fr)</span>;<br>
+        &nbsp;&nbsp;<span class="prop">grid-auto-rows</span>: <span class="val">140px</span>;<br>
+        &nbsp;&nbsp;<span class="prop">gap</span>: <span class="val">14px</span>;<br>
+        }<br><br>
+        <span class="com">/* El elemento publicidad */</span><br>
+        <span class="sel">.publicidad</span> {<br>
+        &nbsp;&nbsp;<span class="prop">grid-column</span>: <span class="val">2 / -1</span>; <span class="com">/* línea 2
+            → última línea */</span><br>
+        &nbsp;&nbsp;<span class="prop">grid-row</span>: <span class="val">span 2</span>; &nbsp;&nbsp;<span
+            class="com">/* ocupa 2 filas */</span><br>
+        }
+    </div>
+
+    <!-- ── Marcadores de líneas del grid ── -->
+    <div class="grid-lines">
+        <div class="line-marker">Línea 1 | 2 →</div>
+        <div class="line-marker">← Línea 2 | 3 →</div>
+        <div class="line-marker">← Línea 3 | 4 →</div>
+        <div class="line-marker">← Línea 4 | 5 (-1)</div>
+    </div>
+
+    <!-- ══ GRID CONTENEDOR ══════════════════════════════════ -->
+    <div class="grid-container" style="margin-top:10px;">
+
+        <!-- Fila 1, Columna 1 — celda normal -->
+        <div class="grid-item c1">
+            <span class="item-num">1</span>
+            <p class="item-title">Item A</p>
+            <p class="item-sub">Col 1, Fila 1</p>
+        </div>
+
+        <!-- PUBLICIDAD: empieza en col 2, llega hasta -1, ocupa 2 filas -->
+        <div class="publicidad">
+            <p class="ad-tag">Anuncio patrocinado</p>
+            <p class="ad-title">PUBLICIDAD</p>
+            <p class="ad-sub">Ocupa columnas 2 → 4 (hasta -1) y 2 filas de alto</p>
+            <div class="ad-props">
+                <span class="ad-pill">grid-column: 2 / -1</span>
+                <span class="ad-pill">grid-row: span 2</span>
+            </div>
+        </div>
+
+        <!-- Fila 2, Columna 1 — celda normal -->
+        <div class="grid-item c2">
+            <span class="item-num">2</span>
+            <p class="item-title">Item B</p>
+            <p class="item-sub">Col 1, Fila 2</p>
+        </div>
+
+        <!-- Fila 3 — celdas normales -->
+        <div class="grid-item c3">
+            <span class="item-num">3</span>
+            <p class="item-title">Item C</p>
+            <p class="item-sub">Col 1, Fila 3</p>
+        </div>
+
+        <div class="grid-item c4">
+            <span class="item-num">4</span>
+            <p class="item-title">Item D</p>
+            <p class="item-sub">Col 2, Fila 3</p>
+        </div>
+
+        <div class="grid-item c5">
+            <span class="item-num">5</span>
+            <p class="item-title">Item E</p>
+            <p class="item-sub">Col 3, Fila 3</p>
+        </div>
+
+        <div class="grid-item c1">
+            <span class="item-num">6</span>
+            <p class="item-title">Item F</p>
+            <p class="item-sub">Col 4, Fila 3</p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

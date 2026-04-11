@@ -1,0 +1,207 @@
+/* ================================================
+   EJERCICIO 1 — Rejilla de 3 columnas
+   250px | 2fr | 1fr   con gap de 15px
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@400;600;800&display=swap');
+
+:root {
+    --bg: #f5f0e8;
+    --text: #1a1a1a;
+    --muted: #888;
+    --border: #ddd;
+    --col1: #1a1a2e;
+    /* azul oscuro  — columna fija 250px */
+    --col2: #e63946;
+    /* rojo         — columna 2fr */
+    --col3: #457b9d;
+    /* azul acero   — columna 1fr */
+    --mono: 'Space Mono', monospace;
+    --sans: 'Outfit', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    font-family: var(--sans);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 40px 32px;
+}
+
+/* ── Encabezado del ejercicio ── */
+.ex-header {
+    margin-bottom: 40px;
+}
+
+.ex-badge {
+    display: inline-block;
+    background: var(--text);
+    color: var(--bg);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+}
+
+.ex-header h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+
+.ex-header p {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+/* ── Etiqueta de código ── */
+.code-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.code-block {
+    background: #1a1a1a;
+    color: #e0e0e0;
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 2;
+    margin-bottom: 32px;
+    overflow-x: auto;
+}
+
+.prop {
+    color: #79c0ff;
+}
+
+.val {
+    color: #ffa657;
+}
+
+.sel {
+    color: #7ee787;
+}
+
+.com {
+    color: #555;
+    font-style: italic;
+}
+
+/* ================================================
+   LA PROPIEDAD CLAVE QUE SE APRENDE:
+   grid-template-columns: 250px 2fr 1fr
+   ================================================ */
+.grid-container {
+    display: grid;
+    grid-template-columns: 250px 2fr 1fr;
+    /* ← AQUÍ está el ejercicio */
+    gap: 15px;
+    /* ← espaciado de 15px */
+}
+
+/* ── Celdas genéricas ── */
+.grid-item {
+    border-radius: 10px;
+    padding: 28px 22px;
+    min-height: 160px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    font-family: var(--mono);
+    position: relative;
+}
+
+.item-num {
+    font-size: 4rem;
+    font-weight: 700;
+    opacity: .12;
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    line-height: 1;
+}
+
+.item-title {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.item-sub {
+    font-size: 10px;
+    opacity: .6;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* ── Colores por columna ── */
+.col-1 {
+    background: var(--col1);
+    color: #fff;
+}
+
+.col-2 {
+    background: var(--col2);
+    color: #fff;
+}
+
+.col-3 {
+    background: var(--col3);
+    color: #fff;
+}
+
+/* Segunda fila — más items para ver el patrón */
+.col-1b {
+    background: #16213e;
+    color: #aaa;
+}
+
+.col-2b {
+    background: #f4a261;
+    color: #1a1a1a;
+}
+
+.col-3b {
+    background: #a8dadc;
+    color: #1a1a1a;
+}
+
+/* ── Regla visual: ancho de cada columna ── */
+.rulers {
+    display: grid;
+    grid-template-columns: 250px 2fr 1fr;
+    gap: 15px;
+    margin-top: 12px;
+}
+
+.ruler {
+    background: none;
+    border: 1.5px dashed var(--border);
+    border-radius: 6px;
+    padding: 8px 14px;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    text-align: center;
+    letter-spacing: 1px;
+}

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Actividad Blog — Grid + Flexbox</title>
+    <link rel="stylesheet" href="../CSS/blog.css" />
+</head>
+
+<body>
+
+    <!--
+  ╔══════════════════════════════════════════════════════════╗
+  ║  ESTRUCTURA GENERAL — CSS GRID                          ║
+  ║  grid-template-areas:                                   ║
+  ║    "header  header"                                     ║
+  ║    "main    sidebar"                                    ║
+  ║    "footer  footer"                                     ║
+  ╚══════════════════════════════════════════════════════════╝
+  -->
+    <div class="page-grid">
+
+        <!-- ══════════════════════════════════════════
+         HEADER — grid-area: header
+         Dentro: NAVBAR con Flexbox (Paso 2)
+    ═══════════════════════════════════════════ -->
+        <header class="page-header">
+            <!--
+        FLEXBOX:
+        display: flex
+        justify-content: space-between  → logo izquierda, nav derecha
+        align-items: center             → centrado vertical
+      -->
+            <nav class="navbar">
+
+                <!-- Logo: lado izquierdo -->
+                <a href="#" class="logo">El<span>Blog</span></a>
+
+                <!-- Menú: lado derecho — Flexbox con gap: 15px -->
+                <ul class="nav-menu">
+                    <li><a href="#" class="active">Inicio</a></li>
+                    <li><a href="#">Tecnología</a></li>
+                    <li><a href="#">Diseño</a></li>
+                    <li><a href="#">Tutoriales</a></li>
+                    <li><a href="#">Contacto</a></li>
+                </ul>
+
+            </nav>
+        </header>
+
+
+        <!-- ══════════════════════════════════════════
+         MAIN — grid-area: main
+         Dentro: TARJETAS con Flexbox (Paso 3)
+    ═══════════════════════════════════════════ -->
+        <main class="page-main">
+
+            <h2 class="section-heading">
+                Artículos Recientes
+                <span>6 posts</span>
+            </h2>
+
+            <!--
+        FLEXBOX:
+        display: flex
+        flex-wrap: wrap    → las tarjetas bajan si no caben
+        gap: 20px
+      -->
+            <div class="cards-container">
+
+                <!-- Tarjeta 1 -->
+                <article class="card">
+                    <div class="card-cover card-cover-1">🎨</div>
+                    <div class="card-body">
+                        <span class="card-tag">Diseño</span>
+                        <h3 class="card-title">Dominando CSS Grid en 2025</h3>
+                        <p class="card-excerpt">
+                            Aprende a crear layouts complejos con grid-template-areas
+                            y deja atrás los hacks de float y positioning.
+                        </p>
+                        <div class="card-meta">
+                            <span>12 Abr · 5 min</span>
+                            <a href="#" class="card-read">Leer →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 2 -->
+                <article class="card">
+                    <div class="card-cover card-cover-2">⚡</div>
+                    <div class="card-body">
+                        <span class="card-tag">Tecnología</span>
+                        <h3 class="card-title">Flexbox vs Grid: cuándo usar cada uno</h3>
+                        <p class="card-excerpt">
+                            Una comparación práctica con ejemplos reales para decidir
+                            qué herramienta de layout elegir en cada situación.
+                        </p>
+                        <div class="card-meta">
+                            <span>10 Abr · 7 min</span>
+                            <a href="#" class="card-read">Leer →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 3 -->
+                <article class="card">
+                    <div class="card-cover card-cover-3">🌿</div>
+                    <div class="card-body">
+                        <span class="card-tag">Tutorial</span>
+                        <h3 class="card-title">Responsive sin media queries usando minmax()</h3>
+                        <p class="card-excerpt">
+                            Con auto-fill y minmax() puedes crear grids fluidos
+                            que se adaptan solos al ancho del contenedor.
+                        </p>
+                        <div class="card-meta">
+                            <span>8 Abr · 4 min</span>
+                            <a href="#" class="card-read">Leer →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 4 -->
+                <article class="card">
+                    <div class="card-cover card-cover-4">🔧</div>
+                    <div class="card-body">
+                        <span class="card-tag">Tutorial</span>
+                        <h3 class="card-title">justify-content y align-items explicados</h3>
+                        <p class="card-excerpt">
+                            Guía visual de todas las propiedades de alineación de Flexbox
+                            con demos interactivos para cada valor.
+                        </p>
+                        <div class="card-meta">
+                            <span>5 Abr · 6 min</span>
+                            <a href="#" class="card-read">Leer →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 5 -->
+                <article class="card">
+                    <div class="card-cover card-cover-5">🚀</div>
+                    <div class="card-body">
+                        <span class="card-tag">Diseño</span>
+                        <h3 class="card-title">Variables CSS: el poder de los custom properties</h3>
+                        <p class="card-excerpt">
+                            Aprende a crear sistemas de diseño escalables usando
+                            variables CSS nativas en lugar de preprocesadores.
+                        </p>
+                        <div class="card-meta">
+                            <span>2 Abr · 8 min</span>
+                            <a href="#" class="card-read">Leer →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Tarjeta 6 -->
+                <article class="card">
+                    <div class="card-cover card-cover-6">📱</div>
+                    <div class="card-body">
+                        <span class="card-tag">Tecnología</span>
+                        <h3 class="card-title">Mobile First: diseña para el móvil primero</h3>
+                        <p class="card-excerpt">
+                            El enfoque mobile-first no es solo una técnica, es una
+                            filosofía que mejora la experiencia en todos los dispositivos.
+                        </p>
+                        <div class="card-meta">
+                            <span>29 Mar · 5 min</span>
+                            <a href="#" class="card-read">Leer →</a>
+                        </div>
+                    </div>
+                </article>
+
+            </div><!-- /cards-container -->
+
+        </main>
+
+
+        <!-- ══════════════════════════════════════════
+         SIDEBAR — grid-area: sidebar
+         Ancho fijo: 250px
+    ═══════════════════════════════════════════ -->
+        <aside class="page-sidebar">
+
+            <p class="sidebar-title">Publicidad</p>
+            <div class="ad-block">
+                <p>BANNER 250×200</p>
+                <p class="ad-size">AD</p>
+            </div>
+
+            <p class="sidebar-title" style="margin-top:8px;">Enlaces</p>
+            <ul class="links-list">
+                <li><a href="#">→ CSS Tricks</a></li>
+                <li><a href="#">→ MDN Web Docs</a></li>
+                <li><a href="#">→ Frontend Mentor</a></li>
+                <li><a href="#">→ Kevin Powell</a></li>
+                <li><a href="#">→ Josh W Comeau</a></li>
+            </ul>
+
+            <p class="sidebar-title" style="margin-top:24px;">Publicidad</p>
+            <div class="ad-block">
+                <p>BANNER 250×150</p>
+                <p class="ad-size">AD</p>
+            </div>
+
+        </aside>
+
+
+        <!-- ══════════════════════════════════════════
+         FOOTER — grid-area: footer
+         Ocupa todo el ancho
+    ═══════════════════════════════════════════ -->
+        <footer class="page-footer">
+            <span>© 2025 ELBLOG · TODOS LOS DERECHOS RESERVADOS</span>
+            <nav style="display:flex;gap:20px;">
+                <a href="#">Privacidad</a>
+                <a href="#">Términos</a>
+                <a href="#">Contacto</a>
+            </nav>
+        </footer>
+
+    </div><!-- /page-grid -->
+
+</body>
+
+</html>

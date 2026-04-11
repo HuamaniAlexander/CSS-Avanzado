@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ejercicios CSS — Grid & Flexbox</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" />
+    <link rel="stylesheet" href="CSS/style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════ -->
+  <nav>
+    <a href="#" class="nav-logo">CSS EJERCICIOS</a>
+    <ul class="nav-links">
+      <li><a href="index.html" class="l-home">← Inicio</a></li>
+      <li>
+        <a href="ejercicio1.html" class="l1">
+          <span class="pip pip-1"></span>Ej 1
+        </a>
+      </li>
+      <li>
+        <a href="ejercicio2.html" class="l2">
+          <span class="pip pip-2"></span>Ej 2
+        </a>
+      </li>
+      <li>
+        <a href="ejercicio3.html" class="l3">
+          <span class="pip pip-3"></span>Ej 3
+        </a>
+      </li>
+      <li>
+        <a href="actividad_blog.html" class="lb">
+          <span class="pip pip-b"></span>Blog
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+
+  <!-- ══════════════════════════════════════
+       HERO
+  ══════════════════════════════════════ -->
+  <section class="hero">
+    <p class="hero-eyebrow">Taller de CSS Layout</p>
+
+    <h1 class="hero-title">
+      <span class="t1">GRID</span>
+      <span class="t2">&amp;</span>
+      <span class="t3">FLEXBOX</span>
+    </h1>
+
+    <p class="hero-sub">
+      3 ejercicios guiados + 1 actividad integradora.<br>
+      Abre cada tarjeta para ver el código en acción.
+    </p>
+
+    <div class="hero-counter">
+      <div class="counter-item ci-1">
+        <span class="counter-num">01</span>
+        <span class="counter-label">3 columnas</span>
+      </div>
+      <div class="counter-item ci-2">
+        <span class="counter-num">02</span>
+        <span class="counter-label">Col/row span</span>
+      </div>
+      <div class="counter-item ci-3">
+        <span class="counter-num">03</span>
+        <span class="counter-label">Areas</span>
+      </div>
+      <div class="counter-item ci-b">
+        <span class="counter-num">★</span>
+        <span class="counter-label">Blog</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>VER EJERCICIOS</span>
+      <div class="scroll-bar"></div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       GRID DE EJERCICIOS
+  ══════════════════════════════════════ -->
+  <section class="exercises">
+    <div class="section-head">
+      <h2>EJERCICIOS</h2>
+      <span class="count">4 ARCHIVOS</span>
+    </div>
+
+    <div class="cards-grid">
+
+      <!-- ── EJERCICIO 1 ── -->
+      <a href="ejercicio1.html" class="ex-card">
+        <div class="card-stripe s1"></div>
+
+        <div class="card-preview p1">
+          <!-- Mini preview: 3 columnas 250px / 2fr / 1fr -->
+          <div class="prev-grid-1" style="width:100%;">
+            <!-- fila 1 -->
+            <div class="pg-cell pg1a">250px</div>
+            <div class="pg-cell pg1b">2fr</div>
+            <div class="pg-cell pg1c">1fr</div>
+            <!-- fila 2 -->
+            <div class="pg-cell pg1a" style="opacity:.5">250px</div>
+            <div class="pg-cell pg1b" style="opacity:.5">2fr</div>
+            <div class="pg-cell pg1c" style="opacity:.5">1fr</div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p class="card-num n1">01</p>
+          <p class="card-tag">CSS Grid · Columnas</p>
+          <h3 class="card-title">Rejilla de 3 Columnas</h3>
+          <p class="card-desc">
+            Primera columna fija de 250px, segunda con el doble de espacio
+            (2fr) y tercera con espacio simple (1fr). Separación de 15px entre celdas.
+          </p>
+          <div class="card-props">
+            <span class="prop-tag pt1">grid-template-columns</span>
+            <span class="prop-tag pt1">250px 2fr 1fr</span>
+            <span class="prop-tag pt1">gap: 15px</span>
+          </div>
+          <span class="card-btn btn1">Abrir ejercicio →</span>
+        </div>
+      </a>
+
+      <!-- ── EJERCICIO 2 ── -->
+      <a href="ejercicio2.html" class="ex-card">
+        <div class="card-stripe s2"></div>
+
+        <div class="card-preview p2">
+          <div style="width:100%;">
+            <div class="prev-grid-2">
+              <div class="pg2-normal"></div>
+              <div class="pg2-ad">PUBLICIDAD<br>2/-1 · span 2</div>
+              <div class="pg2-normal"></div>
+              <div class="pg2-normal"></div>
+              <div class="pg2-normal"></div>
+              <div class="pg2-normal"></div>
+              <div class="pg2-normal"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p class="card-num n2">02</p>
+          <p class="card-tag">CSS Grid · Posicionamiento</p>
+          <h3 class="card-title">Elemento Publicidad</h3>
+          <p class="card-desc">
+            En una rejilla de 4 columnas, el bloque de publicidad empieza en la
+            línea 2 y se extiende hasta la última. Ocupa 2 filas de alto.
+          </p>
+          <div class="card-props">
+            <span class="prop-tag pt2">grid-column: 2 / -1</span>
+            <span class="prop-tag pt2">grid-row: span 2</span>
+          </div>
+          <span class="card-btn btn2">Abrir ejercicio →</span>
+        </div>
+      </a>
+
+      <!-- ── EJERCICIO 3 ── -->
+      <a href="ejercicio3.html" class="ex-card">
+        <div class="card-stripe s3"></div>
+
+        <div class="card-preview p3">
+          <div class="prev-grid-3" style="width:100%;">
+            <div class="pg3-h"></div>
+            <div class="pg3-n"></div>
+            <div class="pg3-m"></div>
+            <div class="pg3-a"></div>
+            <div class="pg3-f"></div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p class="card-num n3">03</p>
+          <p class="card-tag">CSS Grid · Template Areas</p>
+          <h3 class="card-title">Dashboard con Areas</h3>
+          <p class="card-desc">
+            Layout de dashboard completo: header, nav lateral, main, aside de
+            estadísticas y footer que ignora la barra de navegación con un punto <code style="color:#b085f5;font-size:11px">.</code>
+          </p>
+          <div class="card-props">
+            <span class="prop-tag pt3">grid-template-areas</span>
+            <span class="prop-tag pt3">grid-area</span>
+            <span class="prop-tag pt3">". footer footer"</span>
+          </div>
+          <span class="card-btn btn3">Abrir ejercicio →</span>
+        </div>
+      </a>
+
+      <!-- ── ACTIVIDAD BLOG ── -->
+      <a href="actividad_blog.html" class="ex-card">
+        <div class="card-stripe sb"></div>
+
+        <div class="card-preview pb">
+          <div class="prev-blog" style="width:100%;">
+            <div class="pb-h">
+              <div class="pb-h-logo"></div>
+              <div class="pb-h-links">
+                <div class="pb-h-link"></div>
+                <div class="pb-h-link"></div>
+                <div class="pb-h-link"></div>
+              </div>
+            </div>
+            <div class="pb-m">
+              <div class="pb-card-mini"></div>
+              <div class="pb-card-mini"></div>
+              <div class="pb-card-mini"></div>
+              <div class="pb-card-mini"></div>
+            </div>
+            <div class="pb-s"></div>
+            <div class="pb-f"></div>
+          </div>
+        </div>
+
+        <div class="card-body">
+          <p class="card-num nb">★</p>
+          <p class="card-tag">Grid + Flexbox · Actividad</p>
+          <h3 class="card-title">Actividad: Estructura de Blog</h3>
+          <p class="card-desc">
+            Página web completa que combina Grid para el esqueleto (header/main/sidebar/footer)
+            y Flexbox para la navbar, tarjetas de artículos con wrap y alineación.
+          </p>
+          <div class="card-props">
+            <span class="prop-tag ptb">grid-template-areas</span>
+            <span class="prop-tag ptb">display: flex</span>
+            <span class="prop-tag ptb">flex-wrap: wrap</span>
+            <span class="prop-tag ptb">justify-content</span>
+          </div>
+          <span class="card-btn btnb">Abrir actividad →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       TABLA RESUMEN
+  ══════════════════════════════════════ -->
+  <section class="summary">
+    <h2>RESUMEN</h2>
+
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>Archivo</th>
+          <th>Tema</th>
+          <th>Propiedad clave</th>
+          <th>Tipo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>EJERCICIO 1</td>
+          <td class="td1">Rejilla 3 columnas</td>
+          <td class="td1">grid-template-columns: 250px 2fr 1fr</td>
+          <td><span class="badge-type bg-grid">Grid</span></td>
+        </tr>
+        <tr>
+          <td>EJERCICIO 2</td>
+          <td class="td2">Publicidad multi-celda</td>
+          <td class="td2">grid-column: 2 / -1 · grid-row: span 2</td>
+          <td><span class="badge-type bg-grid">Grid</span></td>
+        </tr>
+        <tr>
+          <td>EJERCICIO 3</td>
+          <td class="td3">Dashboard areas</td>
+          <td class="td3">grid-template-areas · punto ( . )</td>
+          <td><span class="badge-type bg-grid">Grid</span></td>
+        </tr>
+        <tr>
+          <td>ACTIVIDAD BLOG</td>
+          <td class="tdb">Blog completo</td>
+          <td class="tdb">Grid + Flex + flex-wrap + justify-content</td>
+          <td><span class="badge-type bg-both">Grid + Flex</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════ -->
+  <footer>
+    <span>TALLER CSS LAYOUT · GRID & FLEXBOX</span>
+    <nav class="footer-links">
+      <a href="index.html">Conceptos</a>
+      <a href="ejercicio1.html">Ej 1</a>
+      <a href="ejercicio2.html">Ej 2</a>
+      <a href="ejercicio3.html">Ej 3</a>
+      <a href="actividad_blog.html">Blog</a>
+    </nav>
+  </footer>
+
+</body>
+</html>

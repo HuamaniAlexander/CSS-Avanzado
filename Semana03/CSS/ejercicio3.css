@@ -1,0 +1,301 @@
+/* ================================================
+   EJERCICIO 3 — Dashboard con grid-template-areas
+   header | nav + main + aside | footer (sin nav)
+   ================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Outfit:wght@400;600;800&display=swap');
+
+:root {
+    --bg: #1c1c27;
+    --text: #e8e8f0;
+    --muted: #666;
+    --border: #2e2e40;
+    --header-c: #7c3aed;
+    /* violeta */
+    --nav-c: #0ea5e9;
+    /* celeste */
+    --main-c: #10b981;
+    /* verde   */
+    --aside-c: #f59e0b;
+    /* ámbar   */
+    --footer-c: #6b7280;
+    /* gris    */
+    --mono: 'Space Mono', monospace;
+    --sans: 'Outfit', sans-serif;
+}
+
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: var(--bg);
+    font-family: var(--sans);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 28px;
+}
+
+.ex-header {
+    margin-bottom: 28px;
+}
+
+.ex-badge {
+    display: inline-block;
+    background: var(--header-c);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin-bottom: 12px;
+}
+
+.ex-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+}
+
+.ex-header p {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.8;
+}
+
+.code-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+}
+
+.code-block {
+    background: #111118;
+    color: #e0e0e0;
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-family: var(--mono);
+    font-size: 11px;
+    line-height: 1.9;
+    margin-bottom: 24px;
+    overflow-x: auto;
+    border: 1px solid var(--border);
+}
+
+.prop {
+    color: #79c0ff;
+}
+
+.val {
+    color: #ffa657;
+}
+
+.sel {
+    color: #7ee787;
+}
+
+.com {
+    color: #444;
+    font-style: italic;
+}
+
+.area {
+    color: #e879f9;
+}
+
+/* ================================================
+   LA PROPIEDAD CLAVE:
+   grid-template-areas define el mapa visual del layout.
+   Cada zona se nombra y luego los hijos usan grid-area.
+
+   "header  header  header"
+   "nav     main    aside"
+   "footer  footer  footer"   ← footer ignora el nav
+   ================================================ */
+.dashboard {
+    display: grid;
+    grid-template-columns: 180px 1fr 220px;
+    grid-template-rows: auto 1fr auto;
+    grid-template-areas:
+        "header  header  header"
+        "nav     main    aside"
+        ".       footer  footer";
+    /* el punto (.) = celda vacía bajo el nav */
+    gap: 14px;
+    min-height: calc(100vh - 220px);
+}
+
+/* ── Zona base ── */
+.zone {
+    border-radius: 12px;
+    padding: 24px 22px;
+    font-family: var(--mono);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.zone-name {
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    opacity: .5;
+    margin-bottom: 6px;
+}
+
+.zone-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--sans);
+}
+
+.zone-prop {
+    font-size: 10px;
+    opacity: .45;
+    letter-spacing: 1px;
+    margin-top: 8px;
+}
+
+.zone-deco {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 6rem;
+    font-weight: 800;
+    opacity: .05;
+    font-family: var(--sans);
+    line-height: 1;
+}
+
+/* ── Colores por zona ── */
+.zone-header {
+    grid-area: header;
+    background: #2a1a4a;
+    border: 1px solid #4a2a7a;
+    color: #c4b5fd;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 70px;
+}
+
+.zone-header .zone-title {
+    font-size: 1.1rem;
+    color: #c4b5fd;
+}
+
+.zone-nav {
+    grid-area: nav;
+    background: #0c2233;
+    border: 1px solid #1a4060;
+    color: var(--nav-c);
+}
+
+.zone-main {
+    grid-area: main;
+    background: #0c2a1e;
+    border: 1px solid #1a5040;
+    color: var(--main-c);
+}
+
+.zone-aside {
+    grid-area: aside;
+    background: #2a1e04;
+    border: 1px solid #5a4010;
+    color: var(--aside-c);
+}
+
+.zone-footer {
+    grid-area: footer;
+    background: #1a1a22;
+    border: 1px solid var(--border);
+    color: var(--footer-c);
+    flex-direction: row;
+    align-items: center;
+    min-height: 54px;
+}
+
+.zone-footer .zone-title {
+    font-size: .9rem;
+}
+
+.zone-footer .zone-prop {
+    margin-top: 0;
+    margin-left: auto;
+}
+
+/* ── Nav links simulados ── */
+.nav-links {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 14px;
+}
+
+.nav-link {
+    background: rgba(14, 165, 233, .08);
+    border: 1px solid rgba(14, 165, 233, .2);
+    border-radius: 7px;
+    padding: 8px 12px;
+    font-size: 11px;
+    color: var(--nav-c);
+    opacity: .7;
+    letter-spacing: .5px;
+}
+
+/* ── Stats en aside ── */
+.stats {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.stat {
+    background: rgba(245, 158, 11, .06);
+    border: 1px solid rgba(245, 158, 11, .15);
+    border-radius: 7px;
+    padding: 10px 12px;
+}
+
+.stat-num {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--aside-c);
+    display: block;
+}
+
+.stat-label {
+    font-size: 10px;
+    opacity: .5;
+    letter-spacing: 1px;
+}
+
+/* ── Contenido en main ── */
+.main-blocks {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.main-block {
+    background: rgba(16, 185, 129, .06);
+    border: 1px solid rgba(16, 185, 129, .15);
+    border-radius: 7px;
+    padding: 12px 14px;
+    font-size: 11px;
+    opacity: .7;
+    color: var(--main-c);
+}
