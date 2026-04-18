@@ -1,0 +1,198 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.pagina {
+    display: grid;
+    grid-template-areas:
+        "encabezado encabezado"
+        "principal  barra"
+        "pie        pie";
+    grid-template-columns: 1fr 200px;
+    grid-template-rows: auto 1fr auto;
+    min-height: 100vh;
+}
+
+.tarjeta-uno {
+    grid-area: t1;
+}
+
+.tarjeta-dos {
+    grid-area: t2;
+}
+
+.tarjeta-tres {
+    grid-area: t3;
+}
+
+.tarjeta-cuatro {
+    grid-area: t4;
+}
+
+.tarjeta-cinco {
+    grid-area: t5;
+}
+
+.tarjeta-seis {
+    grid-area: t6;
+}
+
+.tarjeta-siete {
+    grid-area: t7;
+}
+
+.tarjeta-ocho {
+    grid-area: t8;
+}
+
+.tarjeta-nueve {
+    grid-area: t9;
+}
+
+.encabezado {
+    grid-area: encabezado;
+    background: #0c447c;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logotipo {
+    color: #e6f1fb;
+    font-size: 1.2rem;
+}
+
+.navegacion {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    list-style: none;
+}
+
+.navegacion a {
+    color: #b5d4f4;
+    text-decoration: none;
+}
+
+.principal {
+    grid-area: principal;
+    background: #e6f1fb;
+    padding: 1.5rem;
+}
+
+.contenedor-tarjetas {
+    display: grid;
+    flex-wrap: wrap;
+    gap: 1rem;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+        "t1 t2 t3"
+        "t4 t5 t6"
+        "t7 t8 t9";
+    gap: 1rem;
+}
+
+.tarjeta {
+    flex: 1 1 180px;
+    padding: 1rem;
+    border: 1px solid #85b7eb;
+    background: #b5d4f4;
+}
+
+.barra {
+    grid-area: barra;
+    background: #378add;
+    padding: 1.5rem;
+    border-left: 1px solid #185fa5;
+}
+
+.barra h3 {
+    color: #e6f1fb;
+    margin-bottom: 0.5rem;
+}
+
+.barra ul {
+    list-style: none;
+}
+
+.barra a {
+    text-decoration: none;
+    color: #e6f1fb;
+}
+
+.pie {
+    grid-area: pie;
+    background: #042c53;
+    color: #b5d4f4;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.pie-enlaces {
+    display: flex;
+    gap: 15px;
+    list-style: none;
+}
+
+.pie-enlaces a {
+    color: #b5d4f4;
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    .pagina {
+        grid-template-areas:
+            "encabezado encabezado"
+            "principal  barra"
+            "pie        pie";
+        grid-template-columns: 1fr;
+    }
+
+    .contenedor-tarjetas {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-areas:
+            "t1 t1 t2"
+            "t3 t3 t4"
+            "t5 t6 t6"
+            "t7 t7 t8"
+            "t9 t9 t9";
+    }
+}
+
+@media (max-width: 480px) {
+    .encabezado {
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .navegacion {
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .tarjeta {
+        flex: 1 1 100%;
+    }
+
+    .barra {
+        display: none;
+    }
+
+    .contenedor-tarjetas {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-areas:
+            "t1 t2"
+            "t3 t3"
+            "t4 t5"
+            "t6 t6"
+            "t7 t8"
+            "t9 t9";
+    }
+}
