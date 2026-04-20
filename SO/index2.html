@@ -1,0 +1,2788 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistemas Operativos — Guía Interactiva</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1219;
+    --bg3: #161b25;
+    --card: #1a2030;
+    --border: #2a3448;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --glow: 0 0 20px rgba(0,229,255,0.3);
+    --glow2: 0 0 20px rgba(124,58,237,0.3);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+  }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 3px; }
+
+  /* HEADER */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .hero-bg {
+    position: absolute; inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(0,229,255,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,58,237,0.1) 0%, transparent 50%);
+  }
+
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image: 
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+  }
+
+  @keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+  }
+
+  .hero-content { position: relative; z-index: 2; }
+
+  .hero-tag {
+    display: inline-block;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    padding: 0.4rem 1rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.1em;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .hero h1 {
+    font-size: clamp(3rem, 8vw, 7rem);
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 1rem;
+    animation: fadeDown 0.8s 0.1s ease both;
+  }
+
+  .hero h1 span { 
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text2);
+    max-width: 600px;
+    margin: 0 auto 2.5rem;
+    animation: fadeDown 0.8s 0.2s ease both;
+  }
+
+  .hero-nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    animation: fadeDown 0.8s 0.3s ease both;
+  }
+
+  .hero-nav a {
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 0.6rem 1.2rem;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .hero-nav a:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: var(--glow);
+    transform: translateY(-2px);
+  }
+
+  .scroll-hint {
+    position: absolute; bottom: 2rem;
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.5rem; color: var(--text3); font-size: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+
+  /* SECTION */
+  section {
+    padding: 5rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  h2.section-title {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    line-height: 1.1;
+  }
+
+  .section-desc {
+    color: var(--text2);
+    margin-bottom: 3rem;
+    max-width: 600px;
+    line-height: 1.6;
+  }
+
+  /* CARDS */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.3s;
+  }
+
+  .card:hover { 
+    transform: translateY(-4px); 
+    border-color: rgba(0,229,255,0.3);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  }
+  .card:hover::before { transform: scaleX(1); }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    display: block;
+  }
+
+  .card h3 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: var(--text);
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-cyan { background: rgba(0,229,255,0.15); color: var(--accent); }
+  .badge-purple { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .badge-green { background: rgba(16,185,129,0.15); color: var(--accent3); }
+  .badge-amber { background: rgba(245,158,11,0.15); color: var(--accent4); }
+  .badge-red { background: rgba(239,68,68,0.15); color: var(--accent5); }
+
+  /* ACCORDION */
+  .accordion { display: flex; flex-direction: column; gap: 0.75rem; }
+
+  .acc-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .acc-header {
+    padding: 1.2rem 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: background 0.2s;
+    user-select: none;
+  }
+
+  .acc-header:hover { background: rgba(255,255,255,0.03); }
+
+  .acc-icon {
+    width: 36px; height: 36px;
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  .acc-header h3 { flex: 1; font-size: 1rem; }
+
+  .acc-arrow {
+    color: var(--text3);
+    transition: transform 0.3s;
+    font-size: 1rem;
+  }
+
+  .acc-item.open .acc-arrow { transform: rotate(180deg); }
+  .acc-item.open .acc-header { border-bottom: 1px solid var(--border); }
+
+  .acc-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .acc-body-inner {
+    padding: 1.5rem;
+    color: var(--text2);
+    line-height: 1.7;
+    font-size: 0.92rem;
+  }
+
+  .acc-body-inner ul {
+    padding-left: 1.2rem;
+    margin-top: 0.5rem;
+  }
+
+  .acc-body-inner li { margin-bottom: 0.4rem; }
+
+  .acc-body-inner strong { color: var(--text); }
+
+  .acc-body-inner .highlight {
+    background: rgba(0,229,255,0.07);
+    border-left: 3px solid var(--accent);
+    padding: 0.75rem 1rem;
+    border-radius: 0 4px 4px 0;
+    margin: 1rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+  }
+
+  /* PROCESS STATE DIAGRAM */
+  .diagram-container {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .diagram-container::before {
+    content: 'DIAGRAMA INTERACTIVO';
+    position: absolute;
+    top: 1rem; right: 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text3);
+    letter-spacing: 0.1em;
+  }
+
+  .process-states {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+
+  .state-node {
+    width: 110px; height: 110px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 2px solid;
+    position: relative;
+    text-align: center;
+  }
+
+  .state-node .state-icon { font-size: 1.6rem; margin-bottom: 0.3rem; }
+  .state-node .state-name { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.05em; }
+
+  .state-new { border-color: #60a5fa; background: rgba(96,165,250,0.1); color: #60a5fa; }
+  .state-ready { border-color: var(--accent3); background: rgba(16,185,129,0.1); color: var(--accent3); }
+  .state-running { border-color: var(--accent4); background: rgba(245,158,11,0.1); color: var(--accent4); }
+  .state-waiting { border-color: var(--accent2); background: rgba(124,58,237,0.1); color: #a78bfa; }
+  .state-terminated { border-color: var(--accent5); background: rgba(239,68,68,0.1); color: var(--accent5); }
+
+  .state-node:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 25px currentColor;
+  }
+
+  .state-node.active {
+    transform: scale(1.15);
+    box-shadow: 0 0 30px currentColor;
+  }
+
+  .state-info {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    color: var(--text2);
+    min-height: 80px;
+    transition: all 0.3s;
+  }
+
+  .state-info h4 { color: var(--text); margin-bottom: 0.4rem; }
+
+  /* MEMORY PYRAMID */
+  .memory-pyramid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    padding: 1rem;
+  }
+
+  .mem-level {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.25s;
+    border-radius: 4px;
+    margin-bottom: 4px;
+    position: relative;
+  }
+
+  .mem-level:hover { filter: brightness(1.2); transform: scaleX(1.02); }
+
+  .mem-bar {
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    padding: 0 1.5rem;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .mem-bar::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.05);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .mem-level:hover .mem-bar::after { opacity: 1; }
+
+  .mem-label {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: white;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+    z-index: 1;
+  }
+
+  .mem-meta {
+    margin-left: 1.5rem;
+    font-size: 0.8rem;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    min-width: 180px;
+  }
+
+  .mem-meta span { display: block; }
+  .mem-speed { color: var(--accent3); }
+  .mem-size { color: var(--accent4); }
+
+  /* SCHEDULING VISUALIZER */
+  .scheduler-controls {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.5rem;
+    align-items: flex-end;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .input-group label {
+    font-size: 0.75rem;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  input[type="number"], select {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.6rem 0.8rem;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    width: 120px;
+    transition: border-color 0.2s;
+  }
+
+  input:focus, select:focus { border-color: var(--accent); }
+
+  select { width: 160px; }
+
+  .btn {
+    padding: 0.65rem 1.4rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent), #0097a7);
+    color: #000;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0,229,255,0.4);
+  }
+
+  .btn-secondary {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text2);
+  }
+
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+  .btn-sm {
+    padding: 0.4rem 0.9rem;
+    font-size: 0.8rem;
+  }
+
+  .gantt-chart {
+    overflow-x: auto;
+    margin-top: 1rem;
+  }
+
+  .gantt-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .gantt-label {
+    width: 60px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text2);
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  .gantt-track {
+    flex: 1;
+    height: 36px;
+    background: var(--bg3);
+    border-radius: 4px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .gantt-block {
+    position: absolute;
+    height: 100%;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 700;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+
+  .gantt-block:hover { filter: brightness(1.3); transform: scaleY(1.05); }
+
+  .gantt-timeline {
+    display: flex;
+    margin-left: 68px;
+    margin-top: 0.3rem;
+  }
+
+  .gantt-tick {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-align: center;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .metric-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-size: 2rem;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .metric-label {
+    font-size: 0.75rem;
+    color: var(--text3);
+    margin-top: 0.3rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* PROCESS TABLE */
+  .process-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .process-table th {
+    background: var(--bg3);
+    color: var(--text3);
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .process-table td {
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text2);
+  }
+
+  .process-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* DEADLOCK CONDITIONS */
+  .conditions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  @media (max-width: 600px) { .conditions-grid { grid-template-columns: 1fr; } }
+
+  .condition-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .condition-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .c1::before { background: radial-gradient(circle at top left, rgba(239,68,68,0.08), transparent 60%); }
+  .c2::before { background: radial-gradient(circle at top left, rgba(245,158,11,0.08), transparent 60%); }
+  .c3::before { background: radial-gradient(circle at top left, rgba(124,58,237,0.08), transparent 60%); }
+  .c4::before { background: radial-gradient(circle at top left, rgba(0,229,255,0.08), transparent 60%); }
+
+  .condition-card:hover { transform: translateY(-3px); }
+  .condition-card:hover::before { opacity: 1; }
+  .condition-card.active::before { opacity: 1; }
+
+  .cond-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 2rem;
+    font-weight: 700;
+    opacity: 0.2;
+    position: absolute;
+    top: 1rem; right: 1.2rem;
+  }
+
+  .cond-icon { font-size: 1.8rem; margin-bottom: 0.75rem; display: block; }
+  .condition-card h3 { font-size: 1rem; margin-bottom: 0.5rem; }
+  .condition-card p { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+  .deadlock-visual {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1.5rem;
+    text-align: center;
+  }
+
+  /* TABS */
+  .tabs { display: flex; gap: 0.5rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+
+  .tab {
+    padding: 0.5rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--text2);
+    background: var(--bg3);
+    transition: all 0.2s;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tab.active {
+    background: var(--accent);
+    color: #000;
+    border-color: var(--accent);
+    font-weight: 700;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* TIMELINE */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.5rem;
+    top: 0; bottom: 0;
+    width: 2px;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -1.65rem;
+    top: 0.35rem;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .timeline-item h4 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+  .timeline-item p { font-size: 0.85rem; color: var(--text2); line-height: 1.6; }
+
+  /* CODE BLOCK */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: #e6edf3;
+    overflow-x: auto;
+    margin: 0.75rem 0;
+    position: relative;
+  }
+
+  .code-block .comment { color: #6e7681; }
+  .code-block .keyword { color: #ff7b72; }
+  .code-block .fn { color: #d2a8ff; }
+  .code-block .str { color: #a5d6ff; }
+  .code-block .num { color: #79c0ff; }
+
+  /* QUIZ */
+  .quiz-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .quiz-q {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .quiz-q .q-num {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    margin-right: 0.5rem;
+  }
+
+  .quiz-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .quiz-option {
+    padding: 0.8rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text2);
+    transition: all 0.2s;
+    background: var(--bg3);
+  }
+
+  .quiz-option:hover:not(.disabled) {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .quiz-option.correct { 
+    border-color: var(--accent3); 
+    background: rgba(16,185,129,0.1); 
+    color: var(--accent3); 
+  }
+
+  .quiz-option.wrong { 
+    border-color: var(--accent5); 
+    background: rgba(239,68,68,0.1); 
+    color: var(--accent5); 
+  }
+
+  .quiz-option.disabled { cursor: default; pointer-events: none; }
+
+  .quiz-feedback {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    font-size: 0.88rem;
+    display: none;
+    line-height: 1.5;
+  }
+
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.ok { background: rgba(16,185,129,0.1); color: var(--accent3); border-left: 3px solid var(--accent3); }
+  .quiz-feedback.fail { background: rgba(239,68,68,0.1); color: var(--accent5); border-left: 3px solid var(--accent5); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 3rem 2rem;
+    color: var(--text3);
+    font-size: 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* PROGRESS BAR */
+  .progress-bar-container {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--bg3);
+    z-index: 1000;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width 0.1s;
+  }
+
+  /* FLOATING NAV */
+  .floating-nav {
+    position: fixed;
+    right: 1.5rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    z-index: 100;
+  }
+
+  .nav-dot {
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--border);
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+  }
+
+  .nav-dot:hover, .nav-dot.active { 
+    background: var(--accent); 
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  .nav-dot::before {
+    content: attr(data-label);
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 0.25rem 0.6rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  .nav-dot:hover::before { opacity: 1; }
+
+  /* SPLIT */
+  .split-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (max-width: 700px) { .split-2 { grid-template-columns: 1fr; } }
+
+  /* GLOW TEXT */
+  .glow-text { text-shadow: 0 0 20px currentColor; }
+
+  /* INFO BOX */
+  .info-box {
+    background: rgba(0,229,255,0.06);
+    border: 1px solid rgba(0,229,255,0.2);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+    color: var(--text2);
+    line-height: 1.6;
+  }
+
+  .info-box strong { color: var(--accent); }
+
+  .warn-box {
+    background: rgba(245,158,11,0.07);
+    border: 1px solid rgba(245,158,11,0.25);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin: 1rem 0;
+    font-size: 0.88rem;
+    color: #fcd34d;
+    line-height: 1.6;
+  }
+
+  /* INTERRUPT ANIMATION */
+  .interrupt-demo {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .cpu-box {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .cpu-unit {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem;
+    width: 130px;
+    text-align: center;
+    transition: all 0.4s;
+    position: relative;
+  }
+
+  .cpu-unit .unit-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .cpu-unit .unit-status {
+    font-size: 0.85rem;
+    font-weight: 700;
+    padding: 0.3rem 0;
+  }
+
+  .cpu-unit.active { 
+    border-color: var(--accent4); 
+    box-shadow: 0 0 15px rgba(245,158,11,0.3); 
+  }
+
+  .cpu-unit.interrupted { 
+    border-color: var(--accent5); 
+    box-shadow: 0 0 15px rgba(239,68,68,0.3); 
+  }
+
+  .cpu-unit.handling { 
+    border-color: var(--accent); 
+    box-shadow: 0 0 15px rgba(0,229,255,0.3); 
+  }
+
+  .interrupt-log {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 1rem;
+    margin-top: 1rem;
+    height: 120px;
+    overflow-y: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+  }
+
+  .log-line { 
+    padding: 0.15rem 0; 
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }
+  .log-line.cyan { color: var(--accent); }
+  .log-line.amber { color: var(--accent4); }
+  .log-line.red { color: var(--accent5); }
+  .log-line.green { color: var(--accent3); }
+
+  /* ARCHITECTURE DIAGRAM */
+  .arch-diagram {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .arch-layer {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    border: 1px solid var(--border);
+    text-align: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+  }
+
+  .arch-layer:first-child { border-radius: 8px 8px 0 0; }
+  .arch-layer:last-child { border-radius: 0 0 8px 8px; }
+
+  .arch-layer:hover { filter: brightness(1.15); }
+
+  .arch-users { background: rgba(96,165,250,0.15); color: #93c5fd; }
+  .arch-apps { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+  .arch-syscall { background: rgba(245,158,11,0.12); color: #fcd34d; }
+  .arch-kernel { background: rgba(124,58,237,0.15); color: #c4b5fd; }
+  .arch-hw { background: rgba(239,68,68,0.12); color: #fca5a5; }
+
+  .arch-arrow {
+    width: 2px;
+    height: 20px;
+    background: var(--border);
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .arch-arrow::after {
+    content: '↕';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 0.6rem;
+    color: var(--text3);
+    background: var(--bg);
+    padding: 0 3px;
+  }
+
+  /* TOOLTIP */
+  [data-tip] {
+    position: relative;
+    cursor: help;
+    border-bottom: 1px dashed var(--text3);
+  }
+
+  [data-tip]::after {
+    content: attr(data-tip);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--card);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.5rem 0.8rem;
+    border-radius: 5px;
+    font-size: 0.78rem;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    z-index: 10;
+    max-width: 250px;
+    white-space: normal;
+    text-align: center;
+    font-style: normal;
+    font-family: 'Syne', sans-serif;
+  }
+
+  [data-tip]:hover::after { opacity: 1; }
+
+  /* ALGO COMPARISON */
+  .algo-compare {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  .algo-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1.2rem;
+    transition: all 0.25s;
+    cursor: pointer;
+  }
+
+  .algo-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .algo-card.selected {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.06);
+  }
+
+  .algo-name {
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--accent);
+  }
+
+  .algo-stats { display: flex; flex-direction: column; gap: 0.4rem; }
+
+  .algo-stat {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.78rem;
+    color: var(--text3);
+  }
+
+  .algo-stat span:last-child { color: var(--text2); }
+
+  /* STAR RATING */
+  .stars { color: var(--accent4); font-size: 0.8rem; }
+  .stars .empty { opacity: 0.25; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .floating-nav { display: none; }
+    .cards-grid { grid-template-columns: 1fr; }
+    .conditions-grid { grid-template-columns: 1fr; }
+    .algo-compare { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* REVEAL ANIM */
+  .reveal {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* PROCESS COLORS */
+  .p1 { background: rgba(0,229,255,0.3); color: #00e5ff; }
+  .p2 { background: rgba(124,58,237,0.3); color: #a78bfa; }
+  .p3 { background: rgba(16,185,129,0.3); color: #6ee7b7; }
+  .p4 { background: rgba(245,158,11,0.3); color: #fcd34d; }
+  .pidle { background: rgba(100,116,139,0.3); color: #94a3b8; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar-container">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<nav class="floating-nav" id="floatingNav">
+  <div class="nav-dot" data-label="Inicio" data-target="hero" onclick="scrollTo('hero')"></div>
+  <div class="nav-dot" data-label="¿Qué es un SO?" data-target="sec-intro" onclick="scrollTo('sec-intro')"></div>
+  <div class="nav-dot" data-label="Arquitectura" data-target="sec-arch" onclick="scrollTo('sec-arch')"></div>
+  <div class="nav-dot" data-label="Interrupciones" data-target="sec-interrupts" onclick="scrollTo('sec-interrupts')"></div>
+  <div class="nav-dot" data-label="Memoria" data-target="sec-memory" onclick="scrollTo('sec-memory')"></div>
+  <div class="nav-dot" data-label="Procesos" data-target="sec-processes" onclick="scrollTo('sec-processes')"></div>
+  <div class="nav-dot" data-label="Planificación" data-target="sec-scheduling" onclick="scrollTo('sec-scheduling')"></div>
+  <div class="nav-dot" data-label="Deadlock" data-target="sec-deadlock" onclick="scrollTo('sec-deadlock')"></div>
+  <div class="nav-dot" data-label="Quiz" data-target="sec-quiz" onclick="scrollTo('sec-quiz')"></div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="grid-bg"></div>
+  <div class="hero-content">
+    <div class="hero-tag">// SEMANA 1 — SESIÓN 1</div>
+    <h1>Sistemas<br><span>Operativos</span></h1>
+    <p class="hero-sub">Guía interactiva completa para aprender y repasar los fundamentos del SO: procesos, memoria, planificación y más.</p>
+    <nav class="hero-nav">
+      <a href="#sec-intro">¿Qué es un SO?</a>
+      <a href="#sec-arch">Arquitectura</a>
+      <a href="#sec-interrupts">Interrupciones</a>
+      <a href="#sec-memory">Memoria</a>
+      <a href="#sec-processes">Procesos</a>
+      <a href="#sec-scheduling">Planificación</a>
+      <a href="#sec-deadlock">Deadlock</a>
+      <a href="#sec-quiz">Quiz</a>
+    </nav>
+  </div>
+  <div class="scroll-hint">
+    <span>SCROLL</span>
+    <span>↓</span>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section id="sec-intro">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 01 — FUNDAMENTOS</div>
+      <h2 class="section-title">¿Qué es un Sistema Operativo?</h2>
+      <p class="section-desc">El SO actúa como intermediario entre tú (usuario) y el hardware. Es el director de orquesta que coordina todo.</p>
+    </div>
+
+    <div class="split-2 reveal" style="margin-bottom: 2rem;">
+      <div class="arch-diagram">
+        <div class="arch-layer arch-users" onclick="showLayerInfo('users')">👤 Usuarios / Programas</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-layer arch-apps" onclick="showLayerInfo('apps')">📦 Programas de Aplicación</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-layer arch-syscall" onclick="showLayerInfo('syscall')">⚡ System Calls (API)</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-layer arch-kernel" onclick="showLayerInfo('kernel')">🧠 Kernel del SO</div>
+        <div class="arch-arrow"></div>
+        <div class="arch-layer arch-hw" onclick="showLayerInfo('hw')">💾 Hardware (CPU, RAM, Discos)</div>
+      </div>
+      <div>
+        <div id="layerInfo" class="state-info" style="margin-top:0; height: 100%; display:flex; flex-direction:column; justify-content:center;">
+          <h4 style="color: var(--accent); margin-bottom: 0.5rem;">← Haz click en una capa</h4>
+          <p style="font-size:0.88rem;">Cada capa tiene un rol específico. El SO (Kernel) es el puente entre el software y el hardware real.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards-grid reveal">
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <h3>Para el Usuario</h3>
+        <p>Busca comodidad y facilidad de uso. El usuario no se preocupa por cómo se reparten los recursos internamente — solo quiere que sus programas funcionen.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚙️</span>
+        <h3>Para el Sistema</h3>
+        <p>El SO es un <strong>asignador de recursos</strong>. Decide cómo usar el hardware de forma eficiente para que todos los usuarios y programas estén satisfechos.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">📱</span>
+        <h3>Sistemas Móviles</h3>
+        <p>En tablets y smartphones (iOS, Android), el SO se optimiza para duración de batería, pantallas táctiles y sensores adicionales como GPS y giroscopio.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚗</span>
+        <h3>Sistemas Embebidos</h3>
+        <p>En autos o electrodomésticos, el SO funciona casi sin intervención del usuario. Opera con restricciones de tiempo muy estrictas.</p>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top: 2.5rem;">
+      <h3 style="margin-bottom: 1rem; font-size: 1.2rem;">Servicios que ofrece el SO</h3>
+      <div class="accordion" id="servicesAccordion">
+
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(0,229,255,0.1);">🖥️</div>
+            <h3>Interfaz de Usuario (UI)</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>El SO puede ofrecer distintas formas de interacción:</p>
+              <ul>
+                <li><strong>CLI (Command Line Interface):</strong> Línea de comandos. Preferida por administradores por su eficiencia y capacidad de automatización con scripts. El intérprete se llama <strong>Shell</strong>.</li>
+                <li><strong>GUI (Graphical User Interface):</strong> Iconos, ventanas y ratón. Facilita el uso para usuarios generales.</li>
+                <li><strong>Pantallas Táctiles:</strong> Gestos, teclados virtuales y comandos de voz.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(16,185,129,0.1);">📁</div>
+            <h3>Sistema de Archivos</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>El SO gestiona el almacenamiento de datos: crear, borrar, leer y escribir archivos y directorios, así como los permisos de acceso a cada uno.</p>
+              <div class="highlight">open() → read() → write() → close()</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(124,58,237,0.1);">🔒</div>
+            <h3>Protección y Seguridad</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>El SO controla el acceso a la información y defiende el sistema contra accesos no válidos. Para esto usa el concepto de <strong>modo dual</strong>:</p>
+              <ul>
+                <li><strong>User Mode (bit=1):</strong> Privilegios limitados. Tus apps normales corren aquí.</li>
+                <li><strong>Kernel Mode (bit=0):</strong> Acceso total al hardware. Solo el SO corre aquí.</li>
+              </ul>
+              <div class="info-box"><strong>⚡ Transición:</strong> Cuando una app necesita un servicio del SO (abrir un archivo), genera un System Call → el bit cambia a 0 (Kernel) → realiza la tarea → vuelve a bit 1 (User).</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(245,158,11,0.1);">📡</div>
+            <h3>Llamadas al Sistema (System Calls)</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>Son la interfaz que permite a los programas de usuario solicitar servicios al kernel. Los desarrolladores usan APIs (POSIX, Win32) para no manejar detalles complejos de hardware.</p>
+              <div class="highlight">
+                <span style="color:#ff7b72">fork</span>() <span style="color:#6e7681">// crear proceso</span><br>
+                <span style="color:#ff7b72">exit</span>() <span style="color:#6e7681">// terminar proceso</span><br>
+                <span style="color:#ff7b72">open</span>(<span style="color:#a5d6ff">"/archivo"</span>) <span style="color:#6e7681">// abrir archivo</span><br>
+                <span style="color:#ff7b72">getpid</span>() <span style="color:#6e7681">// obtener ID del proceso</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE -->
+<section id="sec-arch">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 02 — HARDWARE</div>
+      <h2 class="section-title">Arquitectura del Sistema</h2>
+      <p class="section-desc">Cómo se organizan los componentes físicos y cuándo conviene usar múltiples procesadores.</p>
+    </div>
+
+    <div class="tabs reveal">
+      <div class="tab active" onclick="switchTab('arch', 'single')">Un Procesador</div>
+      <div class="tab" onclick="switchTab('arch', 'multi')">Multiprocesadores</div>
+      <div class="tab" onclick="switchTab('arch', 'cluster')">Clustered</div>
+      <div class="tab" onclick="switchTab('arch', 'cloud')">Entornos</div>
+    </div>
+
+    <div id="arch-single" class="tab-panel active reveal">
+      <div class="info-box">
+        <strong>Arquitectura básica:</strong> La CPU, los controladores de dispositivos (disco, pantalla, teclado) se conectan mediante un <strong>bus común</strong> para acceder a la <strong>memoria compartida (RAM)</strong>.
+      </div>
+      <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));">
+        <div class="card">
+          <span class="card-icon">🧠</span>
+          <h3>CPU</h3>
+          <p>Ejecuta instrucciones. Solo puede acceder directamente a la RAM. Puede trabajar simultáneamente con controladores de dispositivos.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">💾</span>
+          <h3>RAM (Memoria Principal)</h3>
+          <p>Único almacenamiento de gran tamaño con acceso directo de la CPU. Es <strong>volátil</strong> — pierde datos al apagar.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">🎮</span>
+          <h3>DMA — Acceso Directo</h3>
+          <p>Para dispositivos de alta velocidad. El controlador mueve bloques de datos directo a RAM sin interrumpir la CPU en cada byte. Solo interrumpe al terminar el bloque.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="arch-multi" class="tab-panel reveal">
+      <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+        <div class="card">
+          <span class="card-icon">🔄</span>
+          <div class="badge badge-green" style="margin-bottom:0.75rem;">SMP — Simétrico</div>
+          <h3>Multiprocesador Simétrico</h3>
+          <p>Cada procesador realiza <strong>todas</strong> las tareas del SO. Todos los procesadores son iguales y comparten bus, reloj y memoria. Es el más común hoy.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">👑</span>
+          <div class="badge badge-amber" style="margin-bottom:0.75rem;">Asimétrico</div>
+          <h3>Multiprocesador Asimétrico</h3>
+          <p>Modelo <strong>maestro-esclavo</strong>. Un procesador master controla el sistema, los esclavos ejecutan tareas específicas. Menos flexible.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">⚡</span>
+          <div class="badge badge-cyan" style="margin-bottom:0.75rem;">Multi-core</div>
+          <h3>Diseño Multinúcleo</h3>
+          <p>Múltiples núcleos de CPU en <strong>un solo chip</strong>. Más eficiente en consumo de energía y velocidad que múltiples chips separados.</p>
+        </div>
+      </div>
+      <div class="warn-box" style="margin-top:1.5rem;">⚡ <strong>Ventajas clave:</strong> Mayor rendimiento, economía de escala y mayor fiabilidad (si una CPU falla, el sistema sigue funcionando, aunque más lento).</div>
+    </div>
+
+    <div id="arch-cluster" class="tab-panel reveal">
+      <div class="info-box"><strong>Clustered ≠ Multiprocesador:</strong> Aquí son varias computadoras <em>independientes</em> trabajando juntas, generalmente conectadas por una red de área de almacenamiento (SAN).</div>
+      <div class="split-2" style="margin-top:1.5rem;">
+        <div class="card">
+          <span class="card-icon">🛡️</span>
+          <h3>Alta Disponibilidad</h3>
+          <p>Si un nodo cae, otro toma su lugar automáticamente. Diseñados para sobrevivir a fallas hardware.</p>
+          <br>
+          <p><strong>Asimétrico:</strong> Una máquina en "espera activa" (hot standby) monitorea el servidor activo.</p>
+          <p style="margin-top:0.5rem;"><strong>Simétrico:</strong> Todos los nodos ejecutan aplicaciones y se monitorean entre sí.</p>
+        </div>
+        <div class="card">
+          <span class="card-icon">🌐</span>
+          <h3>Casos de Uso</h3>
+          <p>Bases de datos de alta disponibilidad, servidores web de gran tráfico, computación científica distribuida, y aplicaciones críticas que no pueden permitirse tiempo de inactividad.</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="arch-cloud" class="tab-panel reveal">
+      <div class="accordion">
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(0,229,255,0.1);">☁️</div>
+            <h3>Computación en la Nube</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>Ofrece recursos (CPU, almacenamiento, apps) como un <strong>servicio por red</strong>, basado en virtualización y pago por uso.</p>
+              <ul>
+                <li><strong>Pública:</strong> AWS, Google Cloud, Azure — disponible para todos.</li>
+                <li><strong>Privada:</strong> Infraestructura dedicada a una organización.</li>
+                <li><strong>Híbrida:</strong> Combina pública y privada.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(16,185,129,0.1);">🔗</div>
+            <h3>Peer-to-Peer (P2P)</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>No hay jerarquía fija. Cada nodo puede actuar como <strong>cliente, servidor o ambos</strong>. Ejemplo clásico: Skype, BitTorrent. Muy resiliente — no hay un punto central de fallo.</p>
+            </div>
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(245,158,11,0.1);">⏱️</div>
+            <h3>Tiempo Real (Embedded)</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>Sistemas con <strong>restricciones de tiempo fijas y estrictas</strong>. Si no cumple el plazo (deadline), el sistema falló.</p>
+              <ul>
+                <li><strong>Hard Real-Time:</strong> Frenos ABS de un auto. Fallar el deadline = catástrofe.</li>
+                <li><strong>Soft Real-Time:</strong> Streaming de video. Un retraso es molesto pero no catastrófico.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERRUPTS -->
+<section id="sec-interrupts">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 03 — CORAZÓN DEL SO</div>
+      <h2 class="section-title">Interrupciones</h2>
+      <p class="section-desc">El SO está "impulsado por interrupciones". Sin este mecanismo, el sistema no podría manejar múltiples dispositivos eficientemente.</p>
+    </div>
+
+    <div class="split-2 reveal">
+      <div>
+        <h3 style="margin-bottom:1rem; font-size:1.1rem;">¿Cómo funciona?</h3>
+        <div class="timeline">
+          <div class="timeline-item">
+            <h4>1. CPU ejecutando proceso</h4>
+            <p>La CPU está ocupada ejecutando instrucciones de un programa normalmente.</p>
+          </div>
+          <div class="timeline-item">
+            <h4>2. Dispositivo termina tarea</h4>
+            <p>Un dispositivo (teclado, disco, red) termina una operación y envía una señal de interrupción al bus.</p>
+          </div>
+          <div class="timeline-item">
+            <h4>3. CPU guarda estado</h4>
+            <p>La CPU pausa lo que está haciendo y guarda su estado actual (registros, contador de programa) en memoria.</p>
+          </div>
+          <div class="timeline-item">
+            <h4>4. Ejecuta ISR</h4>
+            <p>La CPU ejecuta la rutina de servicio de interrupción (ISR) correspondiente al dispositivo.</p>
+          </div>
+          <div class="timeline-item">
+            <h4>5. Retoma trabajo original</h4>
+            <p>Restaura el estado guardado y continúa el proceso original como si nada hubiera pasado.</p>
+          </div>
+        </div>
+      </div>
+      <div>
+        <h3 style="margin-bottom:1rem; font-size:1.1rem;">Tipos de interrupción</h3>
+        <div class="accordion">
+          <div class="acc-item">
+            <div class="acc-header" onclick="toggleAcc(this)">
+              <div class="acc-icon" style="background:rgba(239,68,68,0.1); color:var(--accent5);">🖥️</div>
+              <h3>Interrupción de Hardware</h3>
+              <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <p>Generada por un <strong>dispositivo físico</strong> para avisar que terminó una tarea o que necesita atención.</p>
+                <ul>
+                  <li>Tecla presionada en el teclado</li>
+                  <li>Disco terminó de leer un sector</li>
+                  <li>Paquete de red recibido</li>
+                  <li>Timer del sistema expiró</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="acc-item">
+            <div class="acc-header" onclick="toggleAcc(this)">
+              <div class="acc-icon" style="background:rgba(245,158,11,0.1); color:var(--accent4);">💥</div>
+              <h3>Trap / Exception (Software)</h3>
+              <span class="acc-arrow">▼</span>
+            </div>
+            <div class="acc-body">
+              <div class="acc-body-inner">
+                <p>Interrupción causada por <strong>software</strong>. Puede ser:</p>
+                <ul>
+                  <li><strong>Error:</strong> División por cero, acceso a memoria inválida.</li>
+                  <li><strong>System Call:</strong> Un programa pide un servicio al kernel (abrir archivo, crear proceso).</li>
+                </ul>
+                <div class="info-box"><strong>Importante:</strong> Un System Call es básicamente un trap intencional — el programa dice "necesito que el kernel haga esto por mí".</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 style="margin:1.5rem 0 1rem; font-size:1.1rem;">E/S: ¿Síncrona o Asíncrona?</h3>
+        <div class="cards-grid" style="grid-template-columns: 1fr 1fr;">
+          <div class="card" style="border-color: rgba(245,158,11,0.3);">
+            <span class="card-icon">⏳</span>
+            <div class="badge badge-amber" style="margin-bottom:0.5rem;">SÍNCRONA</div>
+            <p>El control vuelve al usuario <strong>solo cuando termina</strong> la E/S. La CPU queda inactiva o en bucle de espera. Simple pero ineficiente.</p>
+          </div>
+          <div class="card" style="border-color: rgba(16,185,129,0.3);">
+            <span class="card-icon">⚡</span>
+            <div class="badge badge-green" style="margin-bottom:0.5rem;">ASÍNCRONA</div>
+            <p>El control vuelve <strong>inmediatamente</strong>. La CPU sigue con otras cosas. El programa consulta después si terminó (System Call).</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTERACTIVE INTERRUPT DEMO -->
+    <div class="interrupt-demo reveal" style="margin-top:2rem;">
+      <h3 style="margin-bottom:1.5rem; font-size:1.1rem;">🎮 Demo: Simulador de Interrupciones</h3>
+      <div class="cpu-box" id="cpuBox">
+        <div class="cpu-unit" id="unitCPU">
+          <div class="unit-name">CPU</div>
+          <div class="unit-status" id="cpuStatus">Idle</div>
+        </div>
+        <div style="font-size:1.5rem; color: var(--border);">⟷</div>
+        <div class="cpu-unit" id="unitDisk">
+          <div class="unit-name">DISCO</div>
+          <div class="unit-status" id="diskStatus">Idle</div>
+        </div>
+        <div style="font-size:1.5rem; color: var(--border);">⟷</div>
+        <div class="cpu-unit" id="unitKB">
+          <div class="unit-name">TECLADO</div>
+          <div class="unit-status" id="kbStatus">Idle</div>
+        </div>
+      </div>
+      <div style="display:flex; gap:0.75rem; margin-top:1rem; flex-wrap:wrap;">
+        <button class="btn btn-primary btn-sm" onclick="runInterruptDemo()">▶ Simular Interrupción de Disco</button>
+        <button class="btn btn-secondary btn-sm" onclick="runKBDemo()">⌨️ Simular Tecla Presionada</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetDemo()">↺ Reset</button>
+      </div>
+      <div class="interrupt-log" id="interruptLog">
+        <div class="log-line" style="color:var(--text3);">// Log del sistema — presiona un botón para simular</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MEMORY -->
+<section id="sec-memory">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 04 — ALMACENAMIENTO</div>
+      <h2 class="section-title">Jerarquía de Memoria</h2>
+      <p class="section-desc">La memoria se organiza en niveles según velocidad, costo y capacidad. Cuanto más rápido, más caro y más pequeño.</p>
+    </div>
+
+    <div class="split-2 reveal">
+      <div>
+        <div class="memory-pyramid" id="memPyramid">
+          <div class="mem-level" onclick="showMemInfo('regs')">
+            <div class="mem-bar" style="width:160px; background: linear-gradient(135deg,#ef4444,#dc2626);">
+              <span class="mem-label">Registros CPU</span>
+            </div>
+          </div>
+          <div class="mem-level" onclick="showMemInfo('cache')">
+            <div class="mem-bar" style="width:230px; background: linear-gradient(135deg,#f59e0b,#d97706);">
+              <span class="mem-label">Cache (L1/L2/L3)</span>
+            </div>
+          </div>
+          <div class="mem-level" onclick="showMemInfo('ram')">
+            <div class="mem-bar" style="width:310px; background: linear-gradient(135deg,#10b981,#059669);">
+              <span class="mem-label">RAM (Memoria Principal)</span>
+            </div>
+          </div>
+          <div class="mem-level" onclick="showMemInfo('ssd')">
+            <div class="mem-bar" style="width:390px; background: linear-gradient(135deg,#0ea5e9,#0284c7);">
+              <span class="mem-label">SSD / NVM</span>
+            </div>
+          </div>
+          <div class="mem-level" onclick="showMemInfo('hdd')">
+            <div class="mem-bar" style="width:470px; background: linear-gradient(135deg,#6366f1,#4f46e5);">
+              <span class="mem-label">HDD (Disco Duro)</span>
+            </div>
+          </div>
+          <div class="mem-level" onclick="showMemInfo('cloud')">
+            <div class="mem-bar" style="width:550px; background: linear-gradient(135deg,#8b5cf6,#7c3aed);">
+              <span class="mem-label">Almacenamiento en Nube / Cinta</span>
+            </div>
+          </div>
+        </div>
+        <p style="text-align:center; font-size:0.75rem; color: var(--text3); margin-top:0.5rem; font-family: 'JetBrains Mono', monospace;">← más ancho = más capacidad</p>
+      </div>
+
+      <div id="memInfo" class="state-info" style="margin-top:0; height:100%; display:flex; flex-direction:column; justify-content:center;">
+        <h4 style="color:var(--accent); margin-bottom:0.5rem;">← Click en un nivel</h4>
+        <p style="font-size:0.88rem;">Cada nivel tiene características distintas de velocidad, capacidad y costo.</p>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top: 2.5rem;">
+      <div class="split-2">
+        <div class="card">
+          <span class="card-icon">⚡</span>
+          <h3>El Principio de Caché</h3>
+          <p style="margin-bottom:0.75rem;">Se copia temporalmente información de un almacenamiento lento a uno más rápido para que la CPU trabaje mejor.</p>
+          <div class="timeline" style="padding-left: 1.5rem;">
+            <div class="timeline-item">
+              <h4>CPU busca dato</h4>
+              <p>Primero revisa caché (nanosegundos).</p>
+            </div>
+            <div class="timeline-item">
+              <h4>Cache HIT</h4>
+              <p>Dato encontrado → uso inmediato ✅</p>
+            </div>
+            <div class="timeline-item">
+              <h4>Cache MISS</h4>
+              <p>No está → busca en RAM → copia a caché para futuras consultas.</p>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <span class="card-icon">🔄</span>
+          <h3>Multiprogramación y Multitarea</h3>
+          <div style="margin-top:0.75rem;">
+            <div class="badge badge-cyan" style="margin-bottom:0.5rem;">MULTIPROGRAMACIÓN</div>
+            <p style="font-size:0.85rem; margin-bottom:1rem;">El SO organiza varios trabajos para que la CPU <strong>siempre tenga algo que ejecutar</strong>. Si un proceso espera (E/S), cambia a otro.</p>
+            <div class="badge badge-purple" style="margin-bottom:0.5rem;">MULTITAREA (Time-sharing)</div>
+            <p style="font-size:0.85rem;">Evolución de la multiprogramación. La CPU cambia de trabajo tan rápido que el usuario siente que interactúa con <strong>todos los programas al mismo tiempo</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESSES -->
+<section id="sec-processes">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 05 — GESTIÓN</div>
+      <h2 class="section-title">Procesos</h2>
+      <p class="section-desc">Un proceso es fundamentalmente un <strong>programa en ejecución</strong>. El mismo programa puede generar múltiples procesos simultáneos.</p>
+    </div>
+
+    <div class="split-2 reveal">
+      <div>
+        <h3 style="margin-bottom:1.25rem; font-size:1.1rem;">Estructura en Memoria</h3>
+        <div style="display:flex; flex-direction:column; gap:4px; align-items:center;">
+          <div style="background:rgba(239,68,68,0.15); border:1px solid rgba(239,68,68,0.4); border-radius:4px; padding:0.7rem 1.5rem; width:100%; text-align:center; cursor:pointer;" onclick="showMemSection('stack')">
+            <strong style="color:#fca5a5;">STACK</strong> <span style="color:var(--text3); font-size:0.78rem;">↓ crece hacia abajo</span>
+          </div>
+          <div style="color:var(--text3); text-align:center; font-size:0.75rem; font-family:monospace;">· · ·</div>
+          <div style="background:rgba(124,58,237,0.15); border:1px solid rgba(124,58,237,0.4); border-radius:4px; padding:0.7rem 1.5rem; width:100%; text-align:center; cursor:pointer;" onclick="showMemSection('heap')">
+            <strong style="color:#c4b5fd;">HEAP</strong> <span style="color:var(--text3); font-size:0.78rem;">↑ crece hacia arriba</span>
+          </div>
+          <div style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.4); border-radius:4px; padding:0.7rem 1.5rem; width:100%; text-align:center; cursor:pointer;" onclick="showMemSection('data')">
+            <strong style="color:#6ee7b7;">DATA</strong>
+          </div>
+          <div style="background:rgba(0,229,255,0.12); border:1px solid rgba(0,229,255,0.3); border-radius:4px; padding:0.7rem 1.5rem; width:100%; text-align:center; cursor:pointer;" onclick="showMemSection('text')">
+            <strong style="color:var(--accent);">TEXT (código)</strong>
+          </div>
+        </div>
+        <div id="memSectionInfo" class="state-info" style="margin-top:1rem;">
+          <p style="font-size:0.85rem; color:var(--text3);">← Click en una sección para ver detalles</p>
+        </div>
+      </div>
+
+      <div>
+        <h3 style="margin-bottom:1.25rem; font-size:1.1rem;">Estados del Proceso</h3>
+        <p style="font-size:0.85rem; color:var(--text2); margin-bottom:1rem;">Haz click en cada estado para ver su descripción:</p>
+        <div class="process-states">
+          <div class="state-node state-new" onclick="selectState('new', this)">
+            <span class="state-icon">🆕</span>
+            <span class="state-name">NEW</span>
+          </div>
+          <div class="state-node state-ready" onclick="selectState('ready', this)">
+            <span class="state-icon">✅</span>
+            <span class="state-name">READY</span>
+          </div>
+          <div class="state-node state-running" onclick="selectState('running', this)">
+            <span class="state-icon">▶️</span>
+            <span class="state-name">RUNNING</span>
+          </div>
+          <div class="state-node state-waiting" onclick="selectState('waiting', this)">
+            <span class="state-icon">⏸️</span>
+            <span class="state-name">WAITING</span>
+          </div>
+          <div class="state-node state-terminated" onclick="selectState('terminated', this)">
+            <span class="state-icon">🔴</span>
+            <span class="state-name">TERMINATED</span>
+          </div>
+        </div>
+        <div class="state-info" id="stateInfo">
+          <h4 style="color:var(--accent);">← Selecciona un estado</h4>
+          <p>Un proceso cambia de estado según lo que esté pasando: esperando CPU, esperando E/S, ejecutando, etc.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top: 2.5rem;">
+      <div class="split-2">
+        <div class="card">
+          <span class="card-icon">📋</span>
+          <h3>PCB — Process Control Block</h3>
+          <p style="margin-bottom:0.75rem;">Cada proceso tiene un PCB donde el SO guarda <strong>toda la información</strong> para gestionarlo:</p>
+          <ul style="color:var(--text2); font-size:0.85rem; padding-left:1.2rem; line-height:2;">
+            <li><strong>PID</strong> — Identificador único del proceso</li>
+            <li><strong>Estado</strong> — New/Ready/Running/Waiting/Terminated</li>
+            <li><strong>Program Counter</strong> — Próxima instrucción a ejecutar</li>
+            <li><strong>Registros CPU</strong> — Estado del procesador guardado</li>
+            <li><strong>Prioridad</strong> — Para el planificador</li>
+            <li><strong>Archivos abiertos</strong> — Lista de recursos en uso</li>
+          </ul>
+        </div>
+        <div class="card">
+          <span class="card-icon">🔀</span>
+          <h3>Context Switch — Cambio de Contexto</h3>
+          <p style="margin-bottom:0.75rem;">Cuando la CPU cambia de proceso:</p>
+          <div class="timeline" style="padding-left:1.5rem;">
+            <div class="timeline-item">
+              <h4>Guardar estado del proceso A</h4>
+              <p>Registers, PC, memoria → guardados en el PCB de A.</p>
+            </div>
+            <div class="timeline-item">
+              <h4>Cargar estado del proceso B</h4>
+              <p>Se restaura el PCB de B en la CPU.</p>
+            </div>
+            <div class="timeline-item">
+              <h4>Overhead ⚠️</h4>
+              <p>Durante el cambio, el sistema no hace trabajo útil. Por eso se minimiza la frecuencia.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="margin-top:2rem;">
+      <h3 style="margin-bottom:1rem; font-size:1.1rem;">🐧 Comandos Linux para procesos</h3>
+      <div class="code-block">
+<span class="comment"># Ver todos los procesos con detalles</span>
+<span class="keyword">ps</span> aux
+
+<span class="comment"># Vista dinámica en tiempo real (q para salir)</span>
+<span class="keyword">top</span>
+
+<span class="comment"># Ajustar prioridad de un proceso (-20 máx prioridad, 19 mín)</span>
+<span class="keyword">nice</span> -n -5 <span class="fn">mi_programa</span>
+<span class="keyword">renice</span> -n 10 -p <span class="num">1234</span>   <span class="comment"># cambiar prioridad al proceso PID 1234</span>
+
+<span class="comment"># Terminar proceso de forma ordenada</span>
+<span class="keyword">kill</span> -15 <span class="num">1234</span>   <span class="comment"># SIGTERM — pide que termine</span>
+
+<span class="comment"># Forzar terminación inmediata</span>
+<span class="keyword">kill</span> -9 <span class="num">1234</span>    <span class="comment"># SIGKILL — no se puede ignorar</span>
+
+<span class="comment"># Mantener proceso activo al cerrar terminal</span>
+<span class="keyword">nohup</span> <span class="fn">mi_script.sh</span> &amp;
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCHEDULING -->
+<section id="sec-scheduling">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 06 — PLANIFICACIÓN</div>
+      <h2 class="section-title">Algoritmos de Planificación</h2>
+      <p class="section-desc">¿Cómo decide el SO qué proceso usar la CPU? Aquí están los algoritmos clave.</p>
+    </div>
+
+    <!-- ALGO COMPARISON -->
+    <div class="reveal" style="margin-bottom:2rem;">
+      <h3 style="font-size:1.1rem; margin-bottom:1rem;">Comparativa de Algoritmos</h3>
+      <div class="algo-compare">
+        <div class="algo-card selected" onclick="selectAlgo(this,'fcfs')">
+          <div class="algo-name">FCFS</div>
+          <div class="algo-stats">
+            <div class="algo-stat"><span>Complejidad</span><span>⭐</span></div>
+            <div class="algo-stat"><span>Fairness</span><span>⭐⭐⭐</span></div>
+            <div class="algo-stat"><span>Rendimiento</span><span>⭐⭐</span></div>
+            <div class="algo-stat"><span>Apropiativo</span><span style="color:var(--accent5);">No</span></div>
+          </div>
+        </div>
+        <div class="algo-card" onclick="selectAlgo(this,'sjf')">
+          <div class="algo-name">SJF</div>
+          <div class="algo-stats">
+            <div class="algo-stat"><span>Complejidad</span><span>⭐⭐</span></div>
+            <div class="algo-stat"><span>Fairness</span><span>⭐⭐</span></div>
+            <div class="algo-stat"><span>Rendimiento</span><span>⭐⭐⭐⭐⭐</span></div>
+            <div class="algo-stat"><span>Apropiativo</span><span>Opcional</span></div>
+          </div>
+        </div>
+        <div class="algo-card" onclick="selectAlgo(this,'rr')">
+          <div class="algo-name">Round Robin</div>
+          <div class="algo-stats">
+            <div class="algo-stat"><span>Complejidad</span><span>⭐⭐</span></div>
+            <div class="algo-stat"><span>Fairness</span><span>⭐⭐⭐⭐⭐</span></div>
+            <div class="algo-stat"><span>Rendimiento</span><span>⭐⭐⭐</span></div>
+            <div class="algo-stat"><span>Apropiativo</span><span style="color:var(--accent3);">Sí</span></div>
+          </div>
+        </div>
+        <div class="algo-card" onclick="selectAlgo(this,'priority')">
+          <div class="algo-name">Priority</div>
+          <div class="algo-stats">
+            <div class="algo-stat"><span>Complejidad</span><span>⭐⭐</span></div>
+            <div class="algo-stat"><span>Fairness</span><span>⭐ ⚠️</span></div>
+            <div class="algo-stat"><span>Rendimiento</span><span>⭐⭐⭐⭐</span></div>
+            <div class="algo-stat"><span>Apropiativo</span><span>Opcional</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCHEDULER VISUALIZER -->
+    <div class="diagram-container reveal">
+      <h3 style="font-size:1.1rem; margin-bottom:1.5rem;">⚡ Visualizador de Planificación</h3>
+
+      <div class="scheduler-controls">
+        <div class="input-group">
+          <label>Algoritmo</label>
+          <select id="algoSelect" onchange="updateAlgoSelection()">
+            <option value="fcfs">FCFS — First Come First Served</option>
+            <option value="sjf">SJF — Shortest Job First</option>
+            <option value="rr">Round Robin</option>
+            <option value="priority">Por Prioridad</option>
+          </select>
+        </div>
+        <div class="input-group" id="quantumGroup" style="display:none;">
+          <label>Quantum (ms)</label>
+          <input type="number" id="quantum" value="2" min="1" max="10">
+        </div>
+        <button class="btn btn-primary" onclick="runScheduler()">▶ Simular</button>
+        <button class="btn btn-secondary" onclick="randomizeProcesses()">🎲 Aleatorio</button>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table class="process-table" id="processTable">
+          <thead>
+            <tr>
+              <th>Proceso</th>
+              <th>Llegada</th>
+              <th>Burst (ms)</th>
+              <th id="extraHeader">Prioridad</th>
+            </tr>
+          </thead>
+          <tbody id="processTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="gantt-chart" id="ganttChart" style="display:none;">
+        <h4 style="font-size:0.9rem; margin-bottom:0.75rem; color: var(--text2);">Diagrama de Gantt</h4>
+        <div id="ganttContent"></div>
+        <div class="metrics-grid" id="metricsGrid"></div>
+      </div>
+    </div>
+
+    <!-- ALGO DESCRIPTIONS -->
+    <div class="accordion reveal" style="margin-top:2rem;">
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <div class="acc-icon" style="background:rgba(0,229,255,0.1);">📋</div>
+          <h3>FCFS — Primero en llegar, primero en ser atendido</h3>
+          <span class="acc-arrow">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <p>El algoritmo más simple. Usa una cola FIFO — quien llega primero, se ejecuta primero hasta que termina.</p>
+            <div class="warn-box">⚠️ <strong>Efecto Convoy:</strong> Un proceso muy largo bloquea a todos los demás. Si P1 dura 100ms y P2 dura 1ms, P2 espera 100ms innecesariamente.</div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <div class="acc-icon" style="background:rgba(16,185,129,0.1);">⚡</div>
+          <h3>SJF — Trabajo más corto primero</h3>
+          <span class="acc-arrow">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <p>Ejecuta el proceso con la ráfaga de CPU más corta. Es el algoritmo <strong>óptimo</strong> — minimiza el tiempo de espera promedio.</p>
+            <ul>
+              <li><strong>No apropiativo:</strong> Si llega proceso más corto, el actual termina primero.</li>
+              <li><strong>Apropiativo (SRTF):</strong> Si llega proceso más corto que el tiempo restante, interrumpe inmediatamente.</li>
+            </ul>
+            <div class="warn-box">⚠️ <strong>Problema:</strong> ¿Cómo saber cuánto durará la próxima ráfaga? Se usa estimación mediante promedio exponencial.</div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <div class="acc-icon" style="background:rgba(245,158,11,0.1);">🔄</div>
+          <h3>Round Robin — Turno por turno</h3>
+          <span class="acc-arrow">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <p>Cada proceso recibe un <strong>quantum</strong> de tiempo (10-100ms). Si no termina en su quantum, va al final de la cola.</p>
+            <ul>
+              <li><strong>Quantum grande:</strong> Se comporta como FCFS.</li>
+              <li><strong>Quantum pequeño:</strong> Demasiados cambios de contexto → overhead mata el rendimiento.</li>
+              <li><strong>Quantum ideal:</strong> Mayor que la mayoría de ráfagas de CPU.</li>
+            </ul>
+            <div class="info-box"><strong>💡 Ideal para time-sharing:</strong> Todos los procesos responden, nadie se queda esperando indefinidamente.</div>
+          </div>
+        </div>
+      </div>
+      <div class="acc-item">
+        <div class="acc-header" onclick="toggleAcc(this)">
+          <div class="acc-icon" style="background:rgba(124,58,237,0.1);">🏆</div>
+          <h3>Planificación por Prioridad</h3>
+          <span class="acc-arrow">▼</span>
+        </div>
+        <div class="acc-body">
+          <div class="acc-body-inner">
+            <p>Cada proceso tiene un número de prioridad. La CPU va al proceso con mayor prioridad (número más pequeño = más prioridad).</p>
+            <div class="warn-box">💀 <strong>Inanición (Starvation):</strong> Procesos de baja prioridad pueden nunca ejecutarse si siempre llegan procesos de alta prioridad.</div>
+            <div class="info-box">✅ <strong>Solución — Aging:</strong> Aumentar gradualmente la prioridad de procesos que esperan mucho tiempo. "Envejeces, subes de prioridad."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="reveal" style="margin-top:2rem;">
+      <h3 style="font-size:1.1rem; margin-bottom:1rem;">📊 Métricas de Evaluación</h3>
+      <div class="cards-grid" style="grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));">
+        <div class="card">
+          <div class="badge badge-cyan" style="margin-bottom:0.5rem;">CPU Utilization</div>
+          <p style="font-size:0.85rem;">Mantener la CPU <strong>tan ocupada como sea posible</strong>. Objetivo: 40-90% en sistemas reales.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-green" style="margin-bottom:0.5rem;">Throughput</div>
+          <p style="font-size:0.85rem;"><strong>Procesos completados por unidad de tiempo</strong>. Mayor = mejor rendimiento general.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-amber" style="margin-bottom:0.5rem;">Turnaround Time</div>
+          <p style="font-size:0.85rem;">Tiempo total desde que el proceso <strong>llega hasta que termina</strong>. Incluye espera + ejecución.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-purple" style="margin-bottom:0.5rem;">Waiting Time</div>
+          <p style="font-size:0.85rem;">Tiempo que el proceso pasa <strong>en la cola de listos</strong>. No incluye E/S.</p>
+        </div>
+        <div class="card">
+          <div class="badge badge-red" style="margin-bottom:0.5rem;">Response Time</div>
+          <p style="font-size:0.85rem;">Tiempo desde que se envía la solicitud hasta la <strong>primera respuesta</strong>. Crítico en sistemas interactivos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEADLOCK -->
+<section id="sec-deadlock">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 07 — BLOQUEOS</div>
+      <h2 class="section-title">Deadlock — Bloqueo Mutuo</h2>
+      <p class="section-desc">Un "punto muerto" donde ningún proceso puede avanzar porque todos esperan algo que otro tiene y no suelta.</p>
+    </div>
+
+    <div class="reveal">
+      <div class="info-box" style="margin-bottom:1.5rem; font-size:0.95rem;">
+        <strong>Ejemplo del mundo real:</strong> Imagina que dos personas quieren cruzar un puente de un solo carril. Persona A está a la mitad, Persona B llega al otro extremo. Ninguno cede. Nadie avanza. → <strong>Deadlock.</strong>
+      </div>
+
+      <h3 style="font-size:1.1rem; margin-bottom:1rem;">Las 4 Condiciones Necesarias</h3>
+      <p style="font-size:0.88rem; color:var(--text2); margin-bottom:1.25rem;">Deben cumplirse <strong>todas simultáneamente</strong> para que ocurra un deadlock. Eliminar una = no hay deadlock.</p>
+
+      <div class="conditions-grid">
+        <div class="condition-card c1" onclick="toggleCondition(this)">
+          <span class="cond-num">01</span>
+          <span class="cond-icon">🔐</span>
+          <h3>Exclusión Mutua</h3>
+          <p>Al menos un recurso debe estar en modo <strong>no compartido</strong> — solo un proceso lo usa a la vez. La impresora no puede ser usada por dos procesos simultáneamente.</p>
+        </div>
+        <div class="condition-card c2" onclick="toggleCondition(this)">
+          <span class="cond-num">02</span>
+          <span class="cond-icon">🤲</span>
+          <h3>Posesión y Espera</h3>
+          <p>Un proceso <strong>ya tiene</strong> al menos un recurso Y está esperando obtener recursos adicionales que otros procesos tienen.</p>
+        </div>
+        <div class="condition-card c3" onclick="toggleCondition(this)">
+          <span class="cond-num">03</span>
+          <span class="cond-icon">🚫</span>
+          <h3>Sin Expropiación</h3>
+          <p>Los recursos <strong>no se pueden quitar a la fuerza</strong>. Solo el proceso que lo tiene puede liberarlo voluntariamente cuando termine.</p>
+        </div>
+        <div class="condition-card c4" onclick="toggleCondition(this)">
+          <span class="cond-num">04</span>
+          <span class="cond-icon">🔄</span>
+          <h3>Espera Circular</h3>
+          <p>Existe una cadena: P0 espera recurso de P1, P1 espera de P2, P2 espera de P0. <strong>Círculo cerrado</strong> = nadie avanza.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEADLOCK SVG DIAGRAM -->
+    <div class="deadlock-visual reveal">
+      <h4 style="font-size:0.9rem; margin-bottom:1rem; color: var(--text2);">Grafo de Asignación de Recursos — Ejemplo de Deadlock</h4>
+      <svg viewBox="0 0 600 280" width="100%" style="max-width:600px; margin:0 auto; display:block;">
+        <!-- Resources -->
+        <rect x="220" y="30" width="50" height="50" rx="4" fill="rgba(0,229,255,0.1)" stroke="#00e5ff" stroke-width="1.5"/>
+        <text x="245" y="60" text-anchor="middle" fill="#00e5ff" font-size="11" font-family="JetBrains Mono">R1</text>
+        <circle cx="235" cy="48" r="5" fill="#00e5ff"/>
+
+        <rect x="330" y="30" width="50" height="50" rx="4" fill="rgba(124,58,237,0.1)" stroke="#7c3aed" stroke-width="1.5"/>
+        <text x="355" y="60" text-anchor="middle" fill="#a78bfa" font-size="11" font-family="JetBrains Mono">R2</text>
+        <circle cx="345" cy="48" r="5" fill="#a78bfa"/>
+
+        <!-- Processes -->
+        <circle cx="150" cy="160" r="35" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5"/>
+        <text x="150" y="165" text-anchor="middle" fill="#6ee7b7" font-size="11" font-family="JetBrains Mono" font-weight="700">P1</text>
+
+        <circle cx="320" cy="200" r="35" fill="rgba(245,158,11,0.1)" stroke="#f59e0b" stroke-width="1.5"/>
+        <text x="320" y="205" text-anchor="middle" fill="#fcd34d" font-size="11" font-family="JetBrains Mono" font-weight="700">P2</text>
+
+        <circle cx="470" cy="160" r="35" fill="rgba(239,68,68,0.1)" stroke="#ef4444" stroke-width="1.5"/>
+        <text x="470" y="165" text-anchor="middle" fill="#fca5a5" font-size="11" font-family="JetBrains Mono" font-weight="700">P3</text>
+
+        <!-- Arrows - Assignments (R→P) solid -->
+        <defs>
+          <marker id="arrowG" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#10b981"/>
+          </marker>
+          <marker id="arrowA" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/>
+          </marker>
+          <marker id="arrowR" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#ef4444"/>
+          </marker>
+          <marker id="arrowC" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L8,3 z" fill="#00e5ff"/>
+          </marker>
+        </defs>
+
+        <!-- R1 → P1 (assigned) -->
+        <line x1="230" y1="80" x2="170" y2="130" stroke="#10b981" stroke-width="1.5" marker-end="url(#arrowG)"/>
+        <!-- P1 → R2 (requesting) -->
+        <line x1="180" y1="145" x2="330" y2="50" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowA)"/>
+        <!-- R2 → P3 (assigned) -->
+        <line x1="370" y1="75" x2="445" y2="135" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrowR)"/>
+        <!-- P3 → R1 (requesting) -->
+        <line x1="440" y1="145" x2="280" y2="50" stroke="#00e5ff" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrowC)"/>
+
+        <!-- Labels -->
+        <text x="185" y="100" fill="#10b981" font-size="9" font-family="JetBrains Mono">asignado</text>
+        <text x="230" y="110" fill="#f59e0b" font-size="9" font-family="JetBrains Mono">solicita</text>
+        <text x="400" y="95" fill="#ef4444" font-size="9" font-family="JetBrains Mono">asignado</text>
+        <text x="340" y="130" fill="#00e5ff" font-size="9" font-family="JetBrains Mono">solicita</text>
+
+        <!-- Cycle indicator -->
+        <text x="300" y="270" text-anchor="middle" fill="#ef4444" font-size="11" font-family="JetBrains Mono">⚠ CICLO DETECTADO — P1 ↔ P3 en deadlock</text>
+      </svg>
+    </div>
+
+    <!-- STRATEGIES -->
+    <div class="reveal" style="margin-top:2rem;">
+      <h3 style="font-size:1.1rem; margin-bottom:1rem;">Estrategias para Manejar el Deadlock</h3>
+      <div class="accordion">
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(239,68,68,0.1);">🛡️</div>
+            <h3>1. Prevención — Eliminar una condición</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>Asegurar que al menos una de las 4 condiciones nunca se cumpla:</p>
+              <ul>
+                <li><strong>Atacar Espera Circular (más práctica):</strong> Forzar a los procesos a pedir recursos en un <strong>orden específico y global</strong>. Si todos piden recursos en orden R1→R2→R3, no puede haber ciclo.</li>
+                <li><strong>Atacar Posesión y Espera:</strong> El proceso pide TODOS sus recursos antes de empezar. Difícil porque no siempre se sabe qué se necesitará.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(245,158,11,0.1);">🏦</div>
+            <h3>2. Evitación — Algoritmo del Banquero</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>El SO evalúa cada solicitud de recurso: <strong>¿Si concedo esto, el sistema sigue en estado seguro?</strong></p>
+              <p style="margin-top:0.5rem;">Como un banco: solo presta dinero si puede garantizar que todos los clientes podrán devolver sus préstamos. Si la solicitud pondría el sistema en estado <em>inseguro</em>, se rechaza temporalmente.</p>
+              <div class="info-box"><strong>Requiere conocimiento previo:</strong> Cada proceso debe declarar el máximo de recursos que podría necesitar. En la práctica, esto es difícil.</div>
+            </div>
+          </div>
+        </div>
+        <div class="acc-item">
+          <div class="acc-header" onclick="toggleAcc(this)">
+            <div class="acc-icon" style="background:rgba(16,185,129,0.1);">🔍</div>
+            <h3>3. Detección y Recuperación</h3>
+            <span class="acc-arrow">▼</span>
+          </div>
+          <div class="acc-body">
+            <div class="acc-body-inner">
+              <p>Dejar que ocurra el deadlock, detectarlo periódicamente y recuperarse:</p>
+              <ul>
+                <li><strong>Abortar procesos:</strong> Matar todos los procesos en deadlock o uno por uno hasta romper el ciclo.</li>
+                <li><strong>Expropiar recursos:</strong> Quitar recursos a algunos procesos y dárselos a otros.</li>
+              </ul>
+              <div class="warn-box">🐦 <strong>Algoritmo del Avestruz:</strong> Windows y Linux a veces simplemente <strong>ignoran el problema</strong> si ocurre muy raramente, asumiendo que el usuario reiniciará.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUIZ -->
+<section id="sec-quiz">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">// 08 — EVALUACIÓN</div>
+      <h2 class="section-title">Quiz de Repaso</h2>
+      <p class="section-desc">Pon a prueba lo que aprendiste. Haz click en la respuesta correcta.</p>
+    </div>
+
+    <div id="quizContainer" class="reveal">
+
+      <div class="quiz-card" id="q1">
+        <div class="quiz-q"><span class="q-num">Q1.</span> ¿Cuál es la función principal de un Sistema Operativo?</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkAnswer(this,'q1',false,'Un compilador traduce código fuente a código máquina, no gestiona recursos.')">Compilar programas de usuario</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q1',true,'¡Correcto! El SO actúa como intermediario entre usuario y hardware, gestionando recursos de forma eficiente.')">Actuar como intermediario entre usuario y hardware</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q1',false,'Almacenar archivos es función del sistema de archivos, una parte del SO, pero no su función principal.')">Almacenar archivos en el disco</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q1',false,'Conectarse a internet es función de la capa de red, no del SO en general.')">Conectarse a internet</div>
+        </div>
+        <div class="quiz-feedback" id="q1-fb"></div>
+      </div>
+
+      <div class="quiz-card" id="q2">
+        <div class="quiz-q"><span class="q-num">Q2.</span> ¿Qué es una interrupción de hardware?</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkAnswer(this,'q2',false,'Una división por cero es un trap/exception de software, no una interrupción de hardware.')">Un error de división por cero</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q2',false,'Un System Call es una interrupción de software generada por el programa de usuario.')">Una solicitud de un programa al kernel</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q2',true,'¡Correcto! La interrupción de hardware es una señal que envía un dispositivo físico (disco, teclado, red) para avisar a la CPU que terminó una tarea.')">Una señal de un dispositivo físico para avisar a la CPU que terminó una tarea</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q2',false,'Un cambio de contexto es cuando el SO cambia de proceso, no es una interrupción de hardware.')">El proceso de cambiar de un proceso a otro</div>
+        </div>
+        <div class="quiz-feedback" id="q2-fb"></div>
+      </div>
+
+      <div class="quiz-card" id="q3">
+        <div class="quiz-q"><span class="q-num">Q3.</span> ¿Cuál es el algoritmo de planificación óptimo en términos de tiempo de espera promedio mínimo?</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkAnswer(this,'q3',false,'FCFS es simple pero no óptimo — el efecto convoy puede generar tiempos de espera muy altos.')">FCFS (First Come First Served)</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q3',true,'¡Correcto! SJF es matemáticamente óptimo porque al ejecutar primero los procesos más cortos, minimiza el tiempo que todos esperan en promedio.')">SJF (Shortest Job First)</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q3',false,'Round Robin es justo y bueno para tiempo compartido, pero no es el óptimo en tiempo de espera promedio.')">Round Robin</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q3',false,'La planificación por prioridad puede causar inanición y no garantiza tiempo de espera mínimo.')">Planificación por Prioridad</div>
+        </div>
+        <div class="quiz-feedback" id="q3-fb"></div>
+      </div>
+
+      <div class="quiz-card" id="q4">
+        <div class="quiz-q"><span class="q-num">Q4.</span> Para que ocurra un Deadlock, deben cumplirse 4 condiciones. ¿Cuál de estas NO es una de ellas?</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkAnswer(this,'q4',false,'La Exclusión Mutua SÍ es una de las 4 condiciones necesarias para el deadlock.')">Exclusión Mutua</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q4',false,'La Espera Circular SÍ es una de las 4 condiciones — es la que forma el ciclo entre procesos.')">Espera Circular</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q4',true,'¡Correcto! La "Expropiación Forzada" no es una condición de deadlock — de hecho, la condición real es la CONTRARIA: "Sin Expropiación" (los recursos no se pueden quitar).')">Expropiación Forzada de Recursos</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q4',false,'La Posesión y Espera SÍ es una condición — un proceso tiene recursos y espera más.')">Posesión y Espera</div>
+        </div>
+        <div class="quiz-feedback" id="q4-fb"></div>
+      </div>
+
+      <div class="quiz-card" id="q5">
+        <div class="quiz-q"><span class="q-num">Q5.</span> ¿Qué problema puede sufrir la Planificación por Prioridad y cómo se soluciona?</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkAnswer(this,'q5',false,'El Efecto Convoy es el problema del FCFS, no de la planificación por prioridad.')">Efecto Convoy — se soluciona con Round Robin</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q5',true,'¡Correcto! La inanición ocurre cuando procesos de baja prioridad nunca se ejecutan. El Aging soluciona esto aumentando gradualmente la prioridad de los procesos que esperan mucho.')">Inanición (Starvation) — se soluciona con Aging</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q5',false,'El overhead de cambios de contexto es un problema del Round Robin con quantum pequeño.')">Overhead de cambios de contexto — se soluciona aumentando el quantum</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q5',false,'La predicción de duración es un problema del SJF, no de la planificación por prioridad.')">Predicción incorrecta de duración — se soluciona con promedio exponencial</div>
+        </div>
+        <div class="quiz-feedback" id="q5-fb"></div>
+      </div>
+
+      <div class="quiz-card" id="q6">
+        <div class="quiz-q"><span class="q-num">Q6.</span> ¿Cuál es la diferencia entre Programa y Proceso?</div>
+        <div class="quiz-options">
+          <div class="quiz-option" onclick="checkAnswer(this,'q6',false,'No es correcto — cualquier usuario puede ejecutar cualquier programa, creando procesos.')">Un programa solo puede ser ejecutado por el administrador; un proceso por cualquier usuario</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q6',false,'Es al revés — el programa es la entidad pasiva en disco, el proceso es la entidad activa en memoria.')">Un proceso es el archivo guardado en disco; un programa es cuando ese archivo se está ejecutando</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q6',true,'¡Correcto! El programa es el archivo estático en disco (entidad pasiva). El proceso es ese programa cargado en memoria y ejecutándose (entidad activa). Un programa puede generar múltiples procesos.')">Un programa es el archivo en disco (pasivo); un proceso es ese programa cargado en memoria y ejecutándose (activo)</div>
+          <div class="quiz-option" onclick="checkAnswer(this,'q6',false,'No existe tal distinción — un programa puede ejecutarse en múltiples núcleos mediante hilos dentro del mismo proceso.')">No hay diferencia; son sinónimos</div>
+        </div>
+        <div class="quiz-feedback" id="q6-fb"></div>
+      </div>
+
+    </div>
+
+    <div class="reveal" id="quizScore" style="display:none; text-align:center; padding:2rem;">
+      <div class="metric-value" id="scoreDisplay" style="font-size:4rem;">0/6</div>
+      <p style="color:var(--text2); margin-top:0.5rem;" id="scoreMessage"></p>
+      <button class="btn btn-secondary" style="margin-top:1.5rem;" onclick="resetQuiz()">↺ Reintentar</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Sistemas Operativos — Guía Interactiva de Estudio</p>
+  <p style="margin-top:0.5rem; opacity:0.5;">SO · Procesos · Memoria · Planificación · Deadlock</p>
+</footer>
+
+<script>
+// PROGRESS BAR
+window.addEventListener('scroll', () => {
+  const doc = document.documentElement;
+  const scrollTop = window.scrollY;
+  const scrollHeight = doc.scrollHeight - doc.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+
+  // Update nav dots
+  const sections = ['hero','sec-intro','sec-arch','sec-interrupts','sec-memory','sec-processes','sec-scheduling','sec-deadlock','sec-quiz'];
+  const dots = document.querySelectorAll('.nav-dot');
+  sections.forEach((id, i) => {
+    const el = document.getElementById(id);
+    if (el) {
+      const rect = el.getBoundingClientRect();
+      if (rect.top <= 200 && rect.bottom >= 200) {
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[i]) dots[i].classList.add('active');
+      }
+    }
+  });
+});
+
+// SCROLL TO
+function scrollTo(id) {
+  document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+}
+
+// REVEAL ON SCROLL
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ACCORDION
+function toggleAcc(header) {
+  const item = header.parentElement;
+  const body = item.querySelector('.acc-body');
+  const isOpen = item.classList.contains('open');
+  item.classList.toggle('open');
+  body.style.maxHeight = isOpen ? '0' : body.scrollHeight + 'px';
+}
+
+// TABS
+function switchTab(group, tab) {
+  document.querySelectorAll(`[id^="${group}-"]`).forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`${group}-${tab}`)?.classList.add('active');
+  event.target.classList.add('active');
+}
+
+// LAYER INFO
+const layerData = {
+  users: { title: 'Usuarios', color: '#93c5fd', desc: 'Personas, otras máquinas o programas que usan el sistema. Interactúan a través de interfaces (CLI, GUI, táctil). No necesitan saber cómo funciona el hardware.' },
+  apps: { title: 'Programas de Aplicación', color: '#6ee7b7', desc: 'Herramientas para resolver problemas específicos: navegadores, juegos, editores. Usan los servicios del SO para acceder al hardware de forma segura.' },
+  syscall: { title: 'System Calls (API)', color: '#fcd34d', desc: 'La "frontera" entre user mode y kernel mode. Cuando una app necesita hardware, hace una System Call: el procesador pasa al modo privilegiado (bit=0) para ejecutar el código del kernel.' },
+  kernel: { title: 'Kernel del SO', color: '#c4b5fd', desc: 'El núcleo del sistema. Gestiona procesos, memoria, archivos y dispositivos. Corre en modo privilegiado (kernel mode). Usa estructuras de datos internas como listas enlazadas, árboles y mapas hash.' },
+  hw: { title: 'Hardware', color: '#fca5a5', desc: 'Los recursos físicos: CPU (ejecuta instrucciones), RAM (memoria volátil de acceso directo), discos (almacenamiento no volátil), y dispositivos de E/S. Se conectan mediante el bus del sistema.' }
+};
+
+function showLayerInfo(layer) {
+  const d = layerData[layer];
+  const el = document.getElementById('layerInfo');
+  el.innerHTML = `<h4 style="color:${d.color}; margin-bottom:0.5rem;">${d.title}</h4><p style="font-size:0.88rem; line-height:1.6;">${d.desc}</p>`;
+}
+
+// STATE INFO
+const stateData = {
+  new: { title: 'NEW — Nuevo', desc: 'El proceso se está creando. El SO está preparando el PCB, asignando memoria y recursos iniciales. Aún no está listo para ejecutarse.' },
+  ready: { title: 'READY — Listo', desc: 'El proceso está en memoria y listo para ejecutarse. Está esperando que el planificador (scheduler) le asigne tiempo de CPU. Puede haber muchos procesos en esta cola.' },
+  running: { title: 'RUNNING — Ejecutando', desc: 'Las instrucciones del proceso se están ejecutando en la CPU ahora mismo. En un sistema con un núcleo, solo puede haber UN proceso en este estado a la vez.' },
+  waiting: { title: 'WAITING — Esperando', desc: 'El proceso está esperando que ocurra un evento externo: que termine una operación de E/S, que llegue una señal, que otro proceso libere un recurso. No usa CPU durante este tiempo.' },
+  terminated: { title: 'TERMINATED — Terminado', desc: 'El proceso ha finalizado su ejecución (normal o por error). El SO libera los recursos asignados y elimina el PCB. El proceso deja de existir.' }
+};
+
+function selectState(state, node) {
+  document.querySelectorAll('.state-node').forEach(n => n.classList.remove('active'));
+  node.classList.add('active');
+  const d = stateData[state];
+  document.getElementById('stateInfo').innerHTML = `<h4>${d.title}</h4><p style="font-size:0.88rem; line-height:1.6; margin-top:0.4rem;">${d.desc}</p>`;
+}
+
+// MEMORY INFO
+const memData = {
+  regs: { title: 'Registros de CPU', speed: '< 1 ns', size: '< 1 KB', cost: 'Altísimo', desc: 'Memoria más rápida existente. Están DENTRO del procesador. Almacenan datos que la CPU está usando en este instante: el valor actual de una operación, la dirección de la próxima instrucción (PC).' },
+  cache: { title: 'Memoria Caché (L1/L2/L3)', speed: '1–10 ns', size: '256 KB – 32 MB', cost: 'Muy alto', desc: 'Buffer ultra-rápido entre CPU y RAM. L1 es el más rápido (y pequeño), L3 el más lento (y grande). El principio de localidad temporal dice que si usas un dato, probablemente lo uses de nuevo pronto.' },
+  ram: { title: 'RAM — Memoria Principal', speed: '50–100 ns', size: '4–128 GB', cost: 'Moderado', desc: 'Único almacenamiento de gran tamaño con acceso directo de la CPU. Volátil — pierde todo al apagar. Usa tecnología DRAM. Aquí viven los procesos mientras se ejecutan.' },
+  ssd: { title: 'SSD / NVM — Estado Sólido', speed: '0.1–1 ms', size: '256 GB – 4 TB', cost: 'Moderado', desc: 'Más rápido que HDD, sin partes móviles. No volátil. Usa memoria flash. Cada vez más popular como almacenamiento primario del SO y aplicaciones.' },
+  hdd: { title: 'HDD — Disco Duro', speed: '5–10 ms', size: '500 GB – 20 TB', cost: 'Bajo', desc: 'Platos magnéticos giratorios divididos en pistas y sectores. No volátil. Lento por el acceso mecánico (la cabeza lectora debe moverse físicamente). Ideal para grandes volúmenes de datos.' },
+  cloud: { title: 'Almacenamiento en Nube / Cinta', speed: 'segundos–minutos', size: 'Ilimitado', cost: 'Muy bajo/GB', desc: 'El nivel más lento y más barato. Cintas magnéticas para archivado masivo, o servicios cloud para backup y colaboración. Capacidad prácticamente ilimitada.' }
+};
+
+function showMemInfo(level) {
+  const d = memData[level];
+  document.getElementById('memInfo').innerHTML = `
+    <h4 style="color:var(--accent); margin-bottom:0.75rem;">${d.title}</h4>
+    <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-bottom:0.75rem;">
+      <span class="badge badge-green">⚡ ${d.speed}</span>
+      <span class="badge badge-amber">📦 ${d.size}</span>
+    </div>
+    <p style="font-size:0.85rem; line-height:1.6;">${d.desc}</p>`;
+}
+
+// MEM SECTION INFO
+const memSections = {
+  stack: { title: 'STACK (Pila)', color: '#fca5a5', desc: 'Datos temporales: parámetros de funciones, variables locales, direcciones de retorno. Crece hacia abajo. Se gestiona automáticamente al llamar y retornar de funciones. LIFO — último en entrar, primero en salir.' },
+  heap: { title: 'HEAP (Montículo)', color: '#c4b5fd', desc: 'Memoria asignada dinámicamente durante ejecución con malloc() en C o new en Java. El programador la pide y debe liberarla (free/delete). Si no se libera → memory leak. Crece hacia arriba.' },
+  data: { title: 'DATA (Datos)', color: '#6ee7b7', desc: 'Variables globales y estáticas del programa. Se dividen en .data (inicializadas: int x=5) y .bss (no inicializadas: int y). Existen durante toda la vida del proceso.' },
+  text: { title: 'TEXT (Código)', color: '#00e5ff', desc: 'Las instrucciones del programa compiladas. Solo lectura — no se puede modificar durante ejecución. Es el código binario que la CPU ejecuta instrucción por instrucción, guiada por el Program Counter.' }
+};
+
+function showMemSection(section) {
+  const d = memSections[section];
+  document.getElementById('memSectionInfo').innerHTML = `<h4 style="color:${d.color}; margin-bottom:0.4rem;">${d.title}</h4><p style="font-size:0.85rem; line-height:1.6;">${d.desc}</p>`;
+}
+
+// INTERRUPT DEMO
+let demoRunning = false;
+let logEl;
+
+function addLog(msg, cls='') {
+  if (!logEl) logEl = document.getElementById('interruptLog');
+  const line = document.createElement('div');
+  line.className = `log-line ${cls}`;
+  line.textContent = msg;
+  logEl.appendChild(line);
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+function setCPU(id, status, cls='') {
+  const unit = document.getElementById(id);
+  const st = unit.querySelector('[id]') || unit.querySelectorAll('div')[1];
+  unit.className = `cpu-unit ${cls}`;
+  // Find status div
+  const statusDivs = unit.querySelectorAll('.unit-status');
+  if (statusDivs.length) statusDivs[0].textContent = status;
+}
+
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+async function runInterruptDemo() {
+  if (demoRunning) return;
+  demoRunning = true;
+  resetDemo(false);
+  logEl = document.getElementById('interruptLog');
+
+  document.getElementById('cpuStatus').textContent = 'Ejecutando P1';
+  document.getElementById('unitCPU').className = 'cpu-unit active';
+  document.getElementById('diskStatus').textContent = 'Leyendo disco';
+  document.getElementById('unitDisk').className = 'cpu-unit active';
+  addLog('[0ms]  CPU: Ejecutando proceso P1...', 'amber');
+  addLog('[0ms]  DISCO: Leyendo sector 0x4F2...', 'cyan');
+  await sleep(1200);
+
+  document.getElementById('diskStatus').textContent = '✓ Lectura completa';
+  document.getElementById('unitDisk').className = 'cpu-unit handling';
+  addLog('[120ms] DISCO: Lectura completada → Enviando INTERRUPCIÓN al bus', 'green');
+  await sleep(700);
+
+  document.getElementById('cpuStatus').textContent = 'INTERRUPCIÓN!';
+  document.getElementById('unitCPU').className = 'cpu-unit interrupted';
+  addLog('[127ms] CPU: ⚡ INTERRUPCIÓN detectada — guardando estado de P1 en PCB...', 'red');
+  await sleep(800);
+
+  document.getElementById('cpuStatus').textContent = 'Ejecutando ISR';
+  document.getElementById('unitCPU').className = 'cpu-unit handling';
+  addLog('[135ms] CPU: Ejecutando ISR (Interrupt Service Routine) para disco...', 'cyan');
+  addLog('[135ms] CPU: Copiando datos del buffer del disco a RAM...', 'cyan');
+  await sleep(1000);
+
+  addLog('[145ms] CPU: ISR completado. Restaurando estado de P1 desde PCB...', 'green');
+  await sleep(500);
+
+  document.getElementById('cpuStatus').textContent = 'Reanuda P1';
+  document.getElementById('unitCPU').className = 'cpu-unit active';
+  document.getElementById('diskStatus').textContent = 'Idle';
+  document.getElementById('unitDisk').className = 'cpu-unit';
+  addLog('[148ms] CPU: P1 reanudado — continúa desde donde pausó ✓', 'green');
+  demoRunning = false;
+}
+
+async function runKBDemo() {
+  if (demoRunning) return;
+  demoRunning = true;
+  resetDemo(false);
+  logEl = document.getElementById('interruptLog');
+
+  document.getElementById('cpuStatus').textContent = 'Ejecutando P2';
+  document.getElementById('unitCPU').className = 'cpu-unit active';
+  document.getElementById('kbStatus').textContent = 'Esperando...';
+  addLog('[0ms]  CPU: Ejecutando proceso P2 (editor de texto)', 'amber');
+  await sleep(1000);
+
+  document.getElementById('kbStatus').textContent = '⌨ TECLA!';
+  document.getElementById('unitKB').className = 'cpu-unit handling';
+  addLog('[100ms] TECLADO: Usuario presionó tecla "A" → INTERRUPCIÓN IRQ1', 'green');
+  await sleep(600);
+
+  document.getElementById('cpuStatus').textContent = 'TRAP IRQ1';
+  document.getElementById('unitCPU').className = 'cpu-unit interrupted';
+  addLog('[103ms] CPU: ⚡ Interrupción IRQ1 — guardando contexto de P2...', 'red');
+  await sleep(700);
+
+  document.getElementById('cpuStatus').textContent = 'ISR Teclado';
+  document.getElementById('unitCPU').className = 'cpu-unit handling';
+  addLog('[106ms] CPU: ISR de teclado → leyendo scancode, convirtiendo a carácter "A"', 'cyan');
+  addLog('[107ms] CPU: Colocando "A" en buffer de teclado del kernel', 'cyan');
+  await sleep(900);
+
+  addLog('[110ms] CPU: Restaurando contexto de P2...', 'green');
+  await sleep(400);
+
+  document.getElementById('cpuStatus').textContent = 'Reanuda P2';
+  document.getElementById('unitCPU').className = 'cpu-unit active';
+  document.getElementById('kbStatus').textContent = 'Idle';
+  document.getElementById('unitKB').className = 'cpu-unit';
+  addLog('[112ms] P2 lee buffer → muestra "A" en pantalla ✓', 'green');
+  demoRunning = false;
+}
+
+function resetDemo(clearLog=true) {
+  document.getElementById('unitCPU').className = 'cpu-unit';
+  document.getElementById('unitDisk').className = 'cpu-unit';
+  document.getElementById('unitKB').className = 'cpu-unit';
+  document.getElementById('cpuStatus').textContent = 'Idle';
+  document.getElementById('diskStatus').textContent = 'Idle';
+  document.getElementById('kbStatus').textContent = 'Idle';
+  if (clearLog) {
+    document.getElementById('interruptLog').innerHTML = '<div class="log-line" style="color:var(--text3);">// Log del sistema — presiona un botón para simular</div>';
+  }
+  demoRunning = false;
+}
+
+// ALGO SELECTION SYNC
+function selectAlgo(card, algo) {
+  document.querySelectorAll('.algo-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  document.getElementById('algoSelect').value = algo;
+  updateAlgoSelection();
+}
+
+function updateAlgoSelection() {
+  const v = document.getElementById('algoSelect').value;
+  document.getElementById('quantumGroup').style.display = v === 'rr' ? 'flex' : 'none';
+}
+
+// SCHEDULER
+let processes = [
+  { name: 'P1', arrival: 0, burst: 5, priority: 2, color: 'p1' },
+  { name: 'P2', arrival: 1, burst: 3, priority: 1, color: 'p2' },
+  { name: 'P3', arrival: 2, burst: 8, priority: 3, color: 'p3' },
+  { name: 'P4', arrival: 3, burst: 2, priority: 2, color: 'p4' }
+];
+
+function renderTable() {
+  const algo = document.getElementById('algoSelect').value;
+  const isPriority = algo === 'priority';
+  document.getElementById('extraHeader').textContent = isPriority ? 'Prioridad' : 'Prioridad';
+  const tbody = document.getElementById('processTableBody');
+  tbody.innerHTML = processes.map((p, i) => `
+    <tr>
+      <td><span class="badge" style="background:rgba(255,255,255,0.08); color:var(--text);">${p.name}</span></td>
+      <td><input type="number" value="${p.arrival}" min="0" style="width:70px;" oninput="processes[${i}].arrival=+this.value"></td>
+      <td><input type="number" value="${p.burst}" min="1" style="width:70px;" oninput="processes[${i}].burst=+this.value"></td>
+      <td><input type="number" value="${p.priority}" min="1" style="width:70px;" oninput="processes[${i}].priority=+this.value"></td>
+    </tr>`).join('');
+}
+
+function randomizeProcesses() {
+  processes = processes.map(p => ({
+    ...p,
+    arrival: Math.floor(Math.random()*5),
+    burst: Math.floor(Math.random()*8)+1,
+    priority: Math.floor(Math.random()*4)+1
+  }));
+  renderTable();
+  document.getElementById('ganttChart').style.display = 'none';
+}
+
+function runScheduler() {
+  const algo = document.getElementById('algoSelect').value;
+  const quantum = parseInt(document.getElementById('quantum').value) || 2;
+  let timeline = [];
+  const procs = processes.map(p => ({ ...p, remaining: p.burst, startTime: -1, endTime: -1 }));
+
+  if (algo === 'fcfs') {
+    let time = 0;
+    const sorted = [...procs].sort((a,b) => a.arrival - b.arrival);
+    for (const p of sorted) {
+      if (time < p.arrival) { timeline.push({ name: 'Idle', start: time, end: p.arrival, color: 'pidle' }); time = p.arrival; }
+      timeline.push({ name: p.name, start: time, end: time + p.burst, color: p.color });
+      p.startTime = time;
+      p.endTime = time + p.burst;
+      time += p.burst;
+    }
+  } else if (algo === 'sjf') {
+    let time = 0, done = 0, n = procs.length;
+    const visited = new Array(n).fill(false);
+    while (done < n) {
+      const available = procs.filter((p,i) => !visited[i] && p.arrival <= time);
+      if (!available.length) { time++; continue; }
+      available.sort((a,b) => a.burst - b.burst);
+      const p = available[0];
+      const idx = procs.indexOf(p);
+      if (time < p.arrival) { timeline.push({ name:'Idle', start:time, end:p.arrival, color:'pidle' }); time = p.arrival; }
+      timeline.push({ name: p.name, start: time, end: time + p.burst, color: p.color });
+      p.startTime = time; p.endTime = time + p.burst;
+      time += p.burst; visited[idx] = true; done++;
+    }
+  } else if (algo === 'rr') {
+    let time = 0;
+    const queue = [];
+    const remaining = procs.map(p => p.burst);
+    const arrived = new Array(procs.length).fill(false);
+    let done = 0;
+    procs.sort((a,b) => a.arrival - b.arrival);
+    // Add first arrived
+    for (let i=0; i<procs.length; i++) {
+      if (procs[i].arrival <= time) { queue.push(i); arrived[i]=true; }
+    }
+    if (!queue.length) { time = procs[0].arrival; queue.push(0); arrived[0]=true; }
+    while (done < procs.length) {
+      if (!queue.length) {
+        const next = procs.findIndex((p,i) => !arrived[i]);
+        if (next < 0) break;
+        time = procs[next].arrival; queue.push(next); arrived[next]=true;
+      }
+      const idx = queue.shift();
+      const p = procs[idx];
+      const run = Math.min(quantum, remaining[idx]);
+      if (timeline.length && timeline[timeline.length-1].name === 'Idle' && time > 0) {}
+      timeline.push({ name: p.name, start: time, end: time+run, color: p.color });
+      if (p.startTime < 0) p.startTime = time;
+      time += run;
+      remaining[idx] -= run;
+      // Check new arrivals
+      for (let i=0; i<procs.length; i++) {
+        if (!arrived[i] && procs[i].arrival <= time) { queue.push(i); arrived[i]=true; }
+      }
+      if (remaining[idx] > 0) queue.push(idx);
+      else { p.endTime = time; done++; }
+    }
+  } else if (algo === 'priority') {
+    let time = 0, done = 0, n = procs.length;
+    const visited = new Array(n).fill(false);
+    while (done < n) {
+      const available = procs.filter((p,i) => !visited[i] && p.arrival <= time);
+      if (!available.length) { time++; continue; }
+      available.sort((a,b) => a.priority - b.priority);
+      const p = available[0];
+      const idx = procs.indexOf(p);
+      timeline.push({ name: p.name, start: time, end: time + p.burst, color: p.color });
+      p.startTime = time; p.endTime = time + p.burst;
+      time += p.burst; visited[idx] = true; done++;
+    }
+  }
+
+  // Merge consecutive same
+  const merged = [];
+  for (const t of timeline) {
+    if (merged.length && merged[merged.length-1].name === t.name && merged[merged.length-1].color === t.color) {
+      merged[merged.length-1].end = t.end;
+    } else merged.push({...t});
+  }
+
+  const totalTime = merged[merged.length-1]?.end || 0;
+  const scale = Math.min(8, 400 / Math.max(totalTime, 1));
+
+  // Render Gantt
+  const ganttContent = document.getElementById('ganttContent');
+  ganttContent.innerHTML = `
+    <div class="gantt-row">
+      <div class="gantt-label">CPU</div>
+      <div class="gantt-track" style="min-width:${totalTime*scale+10}px; position:relative;">
+        ${merged.map(t => `
+          <div class="gantt-block ${t.color}" 
+               style="left:${(t.start/totalTime)*100}%; width:${((t.end-t.start)/totalTime)*100}%;"
+               title="${t.name}: ${t.start}–${t.end}ms">
+            ${t.name}
+          </div>`).join('')}
+      </div>
+    </div>
+    <div class="gantt-timeline">
+      ${Array.from({length: totalTime+1}, (_,i) => `<div class="gantt-tick" style="width:${scale}px;">${i%Math.max(1,Math.floor(totalTime/10))===0?i:''}</div>`).join('')}
+    </div>`;
+
+  // Metrics
+  let totalWait = 0, totalTurnaround = 0;
+  const origProcs = procs;
+  origProcs.forEach(p => {
+    if (p.endTime > 0) {
+      const turnaround = p.endTime - p.arrival;
+      const wait = turnaround - p.burst;
+      totalWait += wait;
+      totalTurnaround += turnaround;
+    }
+  });
+
+  const avgWait = (totalWait / procs.length).toFixed(1);
+  const avgTurnaround = (totalTurnaround / procs.length).toFixed(1);
+  const cpuUtil = Math.round((1 - merged.filter(t=>t.name==='Idle').reduce((s,t)=>s+(t.end-t.start),0)/totalTime)*100);
+
+  document.getElementById('metricsGrid').innerHTML = `
+    <div class="metric-card"><div class="metric-value">${avgWait}</div><div class="metric-label">Espera Prom (ms)</div></div>
+    <div class="metric-card"><div class="metric-value">${avgTurnaround}</div><div class="metric-label">Turnaround Prom (ms)</div></div>
+    <div class="metric-card"><div class="metric-value">${cpuUtil}%</div><div class="metric-label">Uso CPU</div></div>
+    <div class="metric-card"><div class="metric-value">${totalTime}</div><div class="metric-label">Tiempo Total (ms)</div></div>`;
+
+  document.getElementById('ganttChart').style.display = 'block';
+}
+
+// DEADLOCK CONDITIONS
+function toggleCondition(card) {
+  card.classList.toggle('active');
+}
+
+// QUIZ
+let quizScore = 0;
+let quizAnswered = 0;
+
+function checkAnswer(option, qId, isCorrect, explanation) {
+  const q = document.getElementById(qId);
+  if (q.dataset.answered) return;
+  q.dataset.answered = '1';
+
+  const options = q.querySelectorAll('.quiz-option');
+  options.forEach(o => o.classList.add('disabled'));
+  option.classList.add(isCorrect ? 'correct' : 'wrong');
+
+  // Mark correct answer if wrong
+  if (!isCorrect) {
+    options.forEach(o => {
+      if (o.onclick && o.onclick.toString().includes('true,')) o.classList.add('correct');
+    });
+  }
+
+  const fb = document.getElementById(`${qId}-fb`);
+  fb.textContent = (isCorrect ? '✅ ' : '❌ ') + explanation;
+  fb.className = `quiz-feedback show ${isCorrect ? 'ok' : 'fail'}`;
+
+  if (isCorrect) quizScore++;
+  quizAnswered++;
+
+  if (quizAnswered === 6) {
+    setTimeout(showScore, 800);
+  }
+}
+
+function showScore() {
+  document.getElementById('scoreDisplay').textContent = `${quizScore}/6`;
+  const msgs = ['Sigue practicando 💪', 'Vas bien, repasa los temas débiles 📚', 'Casi perfecto! 🌟', '¡Perfecto! Dominas el tema 🏆'];
+  const msg = quizScore <= 2 ? msgs[0] : quizScore <= 3 ? msgs[1] : quizScore <= 5 ? msgs[2] : msgs[3];
+  document.getElementById('scoreMessage').textContent = msg;
+  document.getElementById('quizScore').style.display = 'block';
+}
+
+function resetQuiz() {
+  quizScore = 0; quizAnswered = 0;
+  document.getElementById('quizScore').style.display = 'none';
+  document.querySelectorAll('.quiz-card').forEach(q => {
+    delete q.dataset.answered;
+    q.querySelectorAll('.quiz-option').forEach(o => {
+      o.className = 'quiz-option';
+    });
+    q.querySelectorAll('.quiz-feedback').forEach(f => {
+      f.className = 'quiz-feedback';
+    });
+  });
+}
+
+// INIT
+renderTable();
+document.getElementById('ganttChart').style.display = 'none';
+</script>
+</body>
+</html>
