@@ -1,0 +1,1590 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SO Arena — Juego de Conocimiento</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1219;
+    --bg3: #161b25;
+    --card: #1a2030;
+    --border: #2a3448;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --accent3: #10b981;
+    --accent4: #f59e0b;
+    --accent5: #ef4444;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg2); }
+  ::-webkit-scrollbar-thumb { background: var(--accent2); border-radius: 3px; }
+
+  /* ── PROGRESS BAR ── */
+  .progress-bar-container {
+    position: fixed; top: 0; left: 0; right: 0;
+    height: 3px; background: var(--bg3); z-index: 1000;
+  }
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    transition: width 0.4s ease;
+  }
+
+  /* ── BACK LINK ── */
+  .back-link {
+    position: fixed; top: 1rem; left: 1.2rem;
+    z-index: 200;
+    display: flex; align-items: center; gap: 0.5rem;
+    color: var(--text3);
+    text-decoration: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    transition: color 0.2s;
+    background: rgba(10,12,16,0.8);
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    backdrop-filter: blur(8px);
+  }
+  .back-link:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ── HUD ── */
+  .hud {
+    position: fixed; top: 1rem; right: 1.2rem;
+    z-index: 200;
+    display: flex; gap: 0.75rem; align-items: center;
+  }
+  .hud-item {
+    background: rgba(10,12,16,0.85);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.35rem 0.8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    backdrop-filter: blur(8px);
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .hud-val { color: var(--accent); font-weight: 700; }
+  .hud-label { color: var(--text3); }
+
+  /* ── SCREENS ── */
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: flex; }
+
+  /* ── INTRO SCREEN ── */
+  #screen-intro {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .intro-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(0,229,255,0.1) 0%, transparent 55%),
+      radial-gradient(ellipse 60% 40% at 80% 90%, rgba(124,58,237,0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .grid-bg {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+    pointer-events: none;
+  }
+  @keyframes gridMove { 0%{transform:translateY(0)} 100%{transform:translateY(50px)} }
+
+  .intro-content { position: relative; z-index: 2; max-width: 700px; }
+
+  .game-tag {
+    display: inline-block;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    padding: 0.35rem 1rem;
+    border-radius: 2px;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.12em;
+    animation: fadeDown 0.7s ease both;
+  }
+
+  .intro-title {
+    font-size: clamp(3rem, 10vw, 6rem);
+    font-weight: 800;
+    line-height: 0.95;
+    margin-bottom: 0.75rem;
+    animation: fadeDown 0.7s 0.1s ease both;
+  }
+  .intro-title .grad {
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .intro-sub {
+    font-size: 1rem;
+    color: var(--text2);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.7s 0.2s ease both;
+    max-width: 520px;
+    margin-left: auto; margin-right: auto;
+  }
+
+  /* Difficulty picker */
+  .diff-grid {
+    display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 2rem;
+    animation: fadeDown 0.7s 0.3s ease both;
+  }
+
+  .diff-btn {
+    background: var(--card);
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.4rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    text-align: center;
+    min-width: 120px;
+    color: var(--text2);
+  }
+  .diff-btn:hover { transform: translateY(-3px); }
+  .diff-btn.selected { border-color: var(--accent); background: rgba(0,229,255,0.06); color: var(--text); }
+  .diff-btn .diff-icon { font-size: 1.6rem; margin-bottom: 0.4rem; display: block; }
+  .diff-btn .diff-name { font-weight: 700; font-size: 0.85rem; display: block; }
+  .diff-btn .diff-desc { font-size: 0.72rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+  /* Stats preview */
+  .stats-preview {
+    display: flex; gap: 1.5rem; justify-content: center; margin-bottom: 2.5rem;
+    animation: fadeDown 0.7s 0.35s ease both;
+  }
+  .stat-item { text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; color: var(--accent); line-height: 1; }
+  .stat-lbl { font-size: 0.7rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.1em; }
+
+  .start-btn {
+    background: linear-gradient(135deg, var(--accent), #0097a7);
+    color: #000;
+    border: none;
+    border-radius: 6px;
+    padding: 1rem 3rem;
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    letter-spacing: 0.05em;
+    animation: fadeDown 0.7s 0.4s ease both;
+    position: relative;
+    overflow: hidden;
+  }
+  .start-btn::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+  .start-btn:hover::after { transform: translateX(0); }
+  .start-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,229,255,0.35); }
+
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-18px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── CATEGORIES SCREEN ── */
+  #screen-categories {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 1.5rem 2rem;
+  }
+
+  .cat-title {
+    font-size: clamp(1.5rem, 5vw, 2.5rem);
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  .cat-sub { color: var(--text2); font-size: 0.9rem; margin-bottom: 2.5rem; text-align: center; font-family: 'JetBrains Mono', monospace; }
+
+  .cat-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    width: 100%;
+  }
+
+  .cat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .cat-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 0.3s;
+  }
+  .cat-card:hover { transform: translateY(-4px); border-color: rgba(0,229,255,0.3); }
+  .cat-card:hover::before { transform: scaleX(1); }
+  .cat-card.cat-0::before { background: linear-gradient(90deg, #60a5fa, #3b82f6); }
+  .cat-card.cat-1::before { background: linear-gradient(90deg, var(--accent2), #a855f7); }
+  .cat-card.cat-2::before { background: linear-gradient(90deg, var(--accent4), #f97316); }
+  .cat-card.cat-3::before { background: linear-gradient(90deg, var(--accent3), #34d399); }
+  .cat-card.cat-4::before { background: linear-gradient(90deg, var(--accent5), #f87171); }
+  .cat-card.cat-5::before { background: linear-gradient(90deg, var(--accent), #0097a7); }
+  .cat-card.cat-6::before { background: linear-gradient(90deg, #e879f9, #a855f7); }
+  .cat-card.cat-7::before { background: linear-gradient(90deg, #fb923c, #f59e0b); }
+  .cat-card.completed { opacity: 0.55; }
+  .cat-card.completed::after {
+    content: '✓';
+    position: absolute; top: 0.75rem; right: 0.75rem;
+    color: var(--accent3); font-size: 1.2rem; font-weight: 700;
+  }
+
+  .cat-icon { font-size: 2rem; margin-bottom: 0.75rem; display: block; }
+  .cat-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+  .cat-count { font-size: 0.75rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; }
+
+  .cat-progress-bar { height: 3px; background: var(--bg3); border-radius: 2px; margin-top: 0.75rem; overflow: hidden; }
+  .cat-progress-fill { height: 100%; background: var(--accent3); border-radius: 2px; transition: width 0.4s; }
+
+  /* ── GAME SCREEN ── */
+  #screen-game {
+    flex-direction: column;
+    align-items: center;
+    padding: 5rem 1.5rem 3rem;
+  }
+
+  .game-wrapper {
+    max-width: 760px;
+    width: 100%;
+  }
+
+  /* Question header */
+  .q-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .q-cat-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+    background: rgba(0,229,255,0.1);
+    border: 1px solid rgba(0,229,255,0.25);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .q-type-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 3px;
+    text-transform: uppercase;
+  }
+  .type-mc { background: rgba(124,58,237,0.15); border: 1px solid rgba(124,58,237,0.3); color: #c4b5fd; }
+  .type-tf { background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); color: #fcd34d; }
+  .type-text { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; }
+  .type-order { background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); color: #fca5a5; }
+  .type-match { background: rgba(96,165,250,0.15); border: 1px solid rgba(96,165,250,0.3); color: #93c5fd; }
+
+  .q-counter {
+    margin-left: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text3);
+  }
+
+  /* Timer ring */
+  .timer-ring-wrap {
+    display: flex; align-items: center; gap: 0.6rem;
+    margin-left: 0.5rem;
+  }
+  .timer-ring {
+    position: relative; width: 38px; height: 38px;
+  }
+  .timer-ring svg { transform: rotate(-90deg); }
+  .timer-ring .bg { fill: none; stroke: var(--bg3); stroke-width: 3; }
+  .timer-ring .fg { fill: none; stroke: var(--accent); stroke-width: 3; stroke-linecap: round; transition: stroke-dashoffset 1s linear, stroke 0.3s; }
+  .timer-num {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem; font-weight: 700;
+    color: var(--text);
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 1.25rem;
+    animation: slideIn 0.4s ease;
+  }
+  @keyframes slideIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+
+  .q-points {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent4);
+    margin-bottom: 0.75rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  .q-text {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.5;
+    margin-bottom: 1.75rem;
+    color: var(--text);
+  }
+  .q-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9em;
+    background: var(--bg3);
+    padding: 0.1em 0.4em;
+    border-radius: 3px;
+    color: var(--accent);
+  }
+
+  /* MC options */
+  .options-list { display: flex; flex-direction: column; gap: 0.65rem; }
+  .option-btn {
+    padding: 0.9rem 1.2rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.92rem;
+    color: var(--text2);
+    transition: all 0.2s;
+    background: var(--bg3);
+    text-align: left;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-family: 'Syne', sans-serif;
+  }
+  .option-key {
+    min-width: 24px; height: 24px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text3);
+    transition: all 0.2s;
+  }
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--accent);
+    color: var(--text);
+    background: rgba(0,229,255,0.05);
+  }
+  .option-btn:hover:not(:disabled) .option-key { border-color: var(--accent); color: var(--accent); }
+  .option-btn.correct { border-color: var(--accent3); background: rgba(16,185,129,0.1); color: var(--accent3); }
+  .option-btn.correct .option-key { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,0.2); }
+  .option-btn.wrong { border-color: var(--accent5); background: rgba(239,68,68,0.1); color: var(--accent5); }
+  .option-btn.wrong .option-key { border-color: var(--accent5); color: var(--accent5); background: rgba(239,68,68,0.2); }
+  .option-btn:disabled { cursor: default; pointer-events: none; }
+
+  /* True/False */
+  .tf-row { display: flex; gap: 1rem; }
+  .tf-btn {
+    flex: 1; padding: 1.2rem;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1rem; font-weight: 800;
+    transition: all 0.25s;
+    background: var(--bg3);
+    color: var(--text2);
+    font-family: 'Syne', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+  }
+  .tf-btn:hover:not(:disabled) { transform: translateY(-3px); }
+  .tf-true:hover:not(:disabled) { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,0.08); }
+  .tf-false:hover:not(:disabled) { border-color: var(--accent5); color: var(--accent5); background: rgba(239,68,68,0.08); }
+  .tf-btn.correct { border-color: var(--accent3); background: rgba(16,185,129,0.12); color: var(--accent3); }
+  .tf-btn.wrong { border-color: var(--accent5); background: rgba(239,68,68,0.12); color: var(--accent5); }
+  .tf-btn:disabled { cursor: default; pointer-events: none; }
+
+  /* Text input */
+  .text-area-wrap { position: relative; }
+  .text-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    resize: vertical;
+    min-height: 100px;
+    outline: none;
+    transition: border-color 0.2s;
+    line-height: 1.6;
+  }
+  .text-input:focus { border-color: var(--accent); }
+  .text-hint {
+    font-size: 0.72rem;
+    color: var(--text3);
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 0.5rem;
+  }
+  .submit-text-btn {
+    margin-top: 1rem;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, var(--accent2), #6d28d9);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .submit-text-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(124,58,237,0.4); }
+  .submit-text-btn:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+  /* Ordering */
+  .order-list { display: flex; flex-direction: column; gap: 0.5rem; }
+  .order-item {
+    padding: 0.75rem 1rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    cursor: grab;
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text2);
+    user-select: none;
+    transition: all 0.2s;
+  }
+  .order-item:hover { border-color: rgba(0,229,255,0.3); }
+  .order-item.dragging { opacity: 0.5; cursor: grabbing; }
+  .order-item.drag-over { border-color: var(--accent); background: rgba(0,229,255,0.06); }
+  .order-handle { color: var(--text3); font-size: 1rem; cursor: grab; }
+  .order-num {
+    min-width: 24px; height: 24px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text3);
+  }
+
+  .submit-order-btn {
+    margin-top: 1rem;
+    padding: 0.75rem 2rem;
+    background: linear-gradient(135deg, var(--accent5), #dc2626);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .submit-order-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(239,68,68,0.4); }
+
+  /* Matching */
+  .match-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+  .match-col { display: flex; flex-direction: column; gap: 0.5rem; }
+  .match-col-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.25rem;
+  }
+  .match-item {
+    padding: 0.7rem 0.9rem;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.2s;
+    min-height: 48px;
+    display: flex; align-items: center;
+  }
+  .match-item.selectable:hover { border-color: var(--accent); color: var(--text); background: rgba(0,229,255,0.05); }
+  .match-item.selected { border-color: var(--accent2); background: rgba(124,58,237,0.1); color: #c4b5fd; }
+  .match-item.matched-ok { border-color: var(--accent3); background: rgba(16,185,129,0.1); color: var(--accent3); pointer-events: none; }
+  .match-item.matched-err { border-color: var(--accent5); background: rgba(239,68,68,0.1); color: var(--accent5); }
+  .match-item.disabled { pointer-events: none; }
+
+  /* Feedback box */
+  .feedback-box {
+    border-radius: 6px;
+    padding: 1rem 1.2rem;
+    margin-top: 1rem;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .feedback-box.show { display: block; }
+  .feedback-box.ok { background: rgba(16,185,129,0.1); border-left: 3px solid var(--accent3); color: var(--accent3); }
+  .feedback-box.fail { background: rgba(239,68,68,0.1); border-left: 3px solid var(--accent5); color: var(--accent5); }
+  .feedback-box .fb-head { font-weight: 700; margin-bottom: 0.3rem; font-size: 1rem; }
+  .feedback-box .fb-body { color: var(--text2); font-size: 0.88rem; }
+  .feedback-box .fb-correct { color: var(--accent3); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; margin-top: 0.4rem; }
+
+  /* Points popup */
+  .pts-popup {
+    position: fixed;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%) scale(0.5);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 3rem;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 500;
+    opacity: 0;
+    text-shadow: 0 0 30px currentColor;
+    transition: none;
+  }
+  .pts-popup.show {
+    animation: popPts 1.2s ease forwards;
+  }
+  @keyframes popPts {
+    0%  { opacity: 0; transform: translate(-50%, -50%) scale(0.4); }
+    20% { opacity: 1; transform: translate(-50%, -70%) scale(1.1); }
+    60% { opacity: 1; transform: translate(-50%, -90%) scale(1); }
+    100%{ opacity: 0; transform: translate(-50%, -120%) scale(0.8); }
+  }
+
+  /* Next btn */
+  .next-btn {
+    display: none;
+    padding: 0.8rem 2.5rem;
+    background: var(--card);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    border-radius: 5px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 1rem;
+  }
+  .next-btn.show { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .next-btn:hover { background: rgba(0,229,255,0.08); box-shadow: 0 0 20px rgba(0,229,255,0.2); }
+
+  /* Streak badge */
+  .streak-badge {
+    position: fixed; bottom: 1.5rem; left: 50%;
+    transform: translateX(-50%);
+    background: rgba(245,158,11,0.15);
+    border: 1px solid rgba(245,158,11,0.4);
+    color: var(--accent4);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    padding: 0.4rem 1rem;
+    border-radius: 20px;
+    z-index: 300;
+    display: none;
+    animation: bounceIn 0.4s ease;
+  }
+  @keyframes bounceIn { 0%{transform:translateX(-50%) scale(0.7)} 60%{transform:translateX(-50%) scale(1.05)} 100%{transform:translateX(-50%) scale(1)} }
+
+  /* ── RESULTS SCREEN ── */
+  #screen-results {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 5rem 1.5rem 3rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .results-bg {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 50%, rgba(124,58,237,0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .trophy {
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    animation: trophyPop 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+  }
+  @keyframes trophyPop { from{transform:scale(0) rotate(-20deg)} to{transform:scale(1) rotate(0)} }
+
+  .results-title { font-size: clamp(2rem, 8vw, 4rem); font-weight: 800; margin-bottom: 0.5rem; }
+  .results-title .grad { background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .results-msg { color: var(--text2); font-size: 1rem; margin-bottom: 2.5rem; }
+
+  .results-stats {
+    display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+    max-width: 600px;
+  }
+  .res-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    min-width: 130px;
+    text-align: center;
+  }
+  .res-val { font-size: 2.2rem; font-weight: 800; font-family: 'JetBrains Mono', monospace; line-height: 1; }
+  .res-lbl { font-size: 0.72rem; color: var(--text3); font-family: 'JetBrains Mono', monospace; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 0.3rem; }
+  .res-val.cyan { color: var(--accent); }
+  .res-val.green { color: var(--accent3); }
+  .res-val.amber { color: var(--accent4); }
+  .res-val.purple { color: #a78bfa; }
+
+  /* Category breakdown */
+  .cat-breakdown { max-width: 500px; width: 100%; margin-bottom: 2.5rem; }
+  .breakdown-title { font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: var(--text3); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 1rem; text-align: left; }
+  .breakdown-row { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.6rem; }
+  .breakdown-name { font-size: 0.82rem; color: var(--text2); width: 130px; text-align: left; flex-shrink: 0; }
+  .breakdown-bar-wrap { flex: 1; height: 6px; background: var(--bg3); border-radius: 3px; overflow: hidden; }
+  .breakdown-bar { height: 100%; border-radius: 3px; transition: width 1s ease; }
+  .breakdown-pct { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; color: var(--text3); width: 36px; text-align: right; }
+
+  .results-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn-restart {
+    padding: 0.9rem 2.5rem;
+    background: linear-gradient(135deg, var(--accent), #0097a7);
+    color: #000; border: none; border-radius: 6px;
+    font-family: 'Syne', sans-serif; font-weight: 800; font-size: 0.95rem;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .btn-restart:hover { transform: translateY(-3px); box-shadow: 0 6px 25px rgba(0,229,255,0.3); }
+  .btn-back-home {
+    padding: 0.9rem 2.5rem;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text2); border-radius: 6px;
+    text-decoration: none;
+    font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem;
+    cursor: pointer; transition: all 0.2s;
+    display: inline-flex; align-items: center;
+  }
+  .btn-back-home:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* Confetti */
+  .confetti-piece {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    animation: confettiFall linear forwards;
+    pointer-events: none;
+    z-index: 999;
+  }
+  @keyframes confettiFall {
+    0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── MOBILE ── */
+  @media (max-width: 480px) {
+    .hud { gap: 0.4rem; right: 0.75rem; top: 0.75rem; }
+    .hud-item { padding: 0.25rem 0.5rem; font-size: 0.68rem; }
+    .back-link { top: 0.75rem; left: 0.75rem; font-size: 0.65rem; padding: 0.3rem 0.6rem; }
+    #screen-game { padding: 4.5rem 1rem 2rem; }
+    .question-card { padding: 1.2rem; }
+    .q-text { font-size: 1rem; }
+    .tf-row { gap: 0.6rem; }
+    .match-grid { grid-template-columns: 1fr; }
+    .cat-grid { grid-template-columns: 1fr 1fr; }
+    .results-stats { gap: 0.75rem; }
+    .res-stat { min-width: 110px; padding: 1rem; }
+    .res-val { font-size: 1.8rem; }
+    .diff-grid { flex-direction: column; align-items: center; }
+    .diff-btn { min-width: 200px; }
+    .stats-preview { gap: 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar-container">
+  <div class="progress-bar" id="progressBar" style="width:0%"></div>
+</div>
+
+<a href="index.html" class="back-link">← index.html</a>
+
+<div class="hud">
+  <div class="hud-item"><span class="hud-label">PTS</span><span class="hud-val" id="hudScore">0</span></div>
+  <div class="hud-item"><span class="hud-label">🔥</span><span class="hud-val" id="hudStreak">0</span></div>
+</div>
+
+<div class="pts-popup" id="ptsPopup">+100</div>
+<div class="streak-badge" id="streakBadge">🔥 ¡Racha x3!</div>
+
+<!-- ══════════ INTRO ══════════ -->
+<div class="screen active" id="screen-intro">
+  <div class="intro-bg"></div>
+  <div class="grid-bg"></div>
+  <div class="intro-content">
+    <div class="game-tag">// SO — ARENA DE CONOCIMIENTO</div>
+    <h1 class="intro-title">SO<br><span class="grad">ARENA</span></h1>
+    <p class="intro-sub">Pon a prueba todo lo que aprendiste sobre Sistemas Operativos. Preguntas de opción múltiple, verdadero/falso, escritura libre, ordenamiento y más.</p>
+
+    <div class="stats-preview">
+      <div class="stat-item"><div class="stat-num">40</div><div class="stat-lbl">Preguntas</div></div>
+      <div class="stat-item"><div class="stat-num">8</div><div class="stat-lbl">Categorías</div></div>
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-lbl">Tipos</div></div>
+    </div>
+
+    <div class="diff-grid">
+      <div class="diff-btn selected" data-diff="normal" onclick="selectDiff(this)">
+        <span class="diff-icon">🎯</span>
+        <span class="diff-name">Normal</span>
+        <span class="diff-desc">20s por pregunta</span>
+      </div>
+      <div class="diff-btn" data-diff="hard" onclick="selectDiff(this)">
+        <span class="diff-icon">⚡</span>
+        <span class="diff-name">Difícil</span>
+        <span class="diff-desc">12s por pregunta</span>
+      </div>
+      <div class="diff-btn" data-diff="zen" onclick="selectDiff(this)">
+        <span class="diff-icon">🧘</span>
+        <span class="diff-name">Zen</span>
+        <span class="diff-desc">Sin límite de tiempo</span>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="showCategories()">INICIAR JUEGO →</button>
+  </div>
+</div>
+
+<!-- ══════════ CATEGORIES ══════════ -->
+<div class="screen" id="screen-categories">
+  <h1 class="cat-title">Elige una <span style="background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Categoría</span></h1>
+  <p class="cat-sub">// Completa todas para ver tu puntaje final</p>
+  <div class="cat-grid" id="catGrid"></div>
+</div>
+
+<!-- ══════════ GAME ══════════ -->
+<div class="screen" id="screen-game">
+  <div class="game-wrapper">
+    <div class="q-header">
+      <span class="q-cat-badge" id="qCatBadge">CATEGORÍA</span>
+      <span class="q-type-badge" id="qTypeBadge">MC</span>
+      <div class="timer-ring-wrap" id="timerWrap">
+        <div class="timer-ring">
+          <svg viewBox="0 0 38 38" width="38" height="38">
+            <circle class="bg" cx="19" cy="19" r="16"/>
+            <circle class="fg" id="timerCircle" cx="19" cy="19" r="16"
+              stroke-dasharray="100.5" stroke-dashoffset="0"/>
+          </svg>
+          <div class="timer-num" id="timerNum">20</div>
+        </div>
+      </div>
+      <span class="q-counter" id="qCounter">1 / 5</span>
+    </div>
+
+    <div class="question-card" id="questionCard">
+      <div class="q-points" id="qPoints">⭐ 100 pts</div>
+      <div class="q-text" id="qText"></div>
+      <div id="qBody"></div>
+    </div>
+
+    <div class="feedback-box" id="feedbackBox">
+      <div class="fb-head" id="fbHead"></div>
+      <div class="fb-body" id="fbBody"></div>
+      <div class="fb-correct" id="fbCorrect"></div>
+    </div>
+
+    <button class="next-btn" id="nextBtn" onclick="nextQuestion()">
+      SIGUIENTE <span>→</span>
+    </button>
+  </div>
+</div>
+
+<!-- ══════════ RESULTS ══════════ -->
+<div class="screen" id="screen-results">
+  <div class="results-bg"></div>
+  <div class="trophy" id="trophy">🏆</div>
+  <h1 class="results-title">¡<span class="grad" id="resultsTitle">Resultado</span>!</h1>
+  <p class="results-msg" id="resultsMsg">Has completado el juego</p>
+
+  <div class="results-stats">
+    <div class="res-stat">
+      <div class="res-val cyan" id="resPts">0</div>
+      <div class="res-lbl">Puntos</div>
+    </div>
+    <div class="res-stat">
+      <div class="res-val green" id="resAcc">0%</div>
+      <div class="res-lbl">Precisión</div>
+    </div>
+    <div class="res-stat">
+      <div class="res-val amber" id="resStreak">0</div>
+      <div class="res-lbl">Racha máx.</div>
+    </div>
+    <div class="res-stat">
+      <div class="res-val purple" id="resTime">0s</div>
+      <div class="res-lbl">Tiempo total</div>
+    </div>
+  </div>
+
+  <div class="cat-breakdown" id="catBreakdown"></div>
+
+  <div class="results-btns">
+    <button class="btn-restart" onclick="restartGame()">JUGAR DE NUEVO</button>
+    <a href="index.html" class="btn-back-home">← Volver al índice</a>
+  </div>
+</div>
+
+<script>
+// ══════════ QUESTION BANK ══════════
+const CATEGORIES = [
+  { id:'intro',    name:'¿Qué es un SO?',  icon:'💻', color:'#60a5fa' },
+  { id:'arch',     name:'Arquitectura',    icon:'🏗️', color:'#a78bfa' },
+  { id:'proc',     name:'Procesos',        icon:'⚙️', color:'#f59e0b' },
+  { id:'mem',      name:'Memoria',         icon:'🧠', color:'#10b981' },
+  { id:'sched',    name:'Planificación',   icon:'📅', color:'#ef4444' },
+  { id:'sync',     name:'Sincronización',  icon:'🔒', color:'#00e5ff' },
+  { id:'dead',     name:'Deadlock',        icon:'☠️', color:'#e879f9' },
+  { id:'fs',       name:'Sistema de Arch.',icon:'📁', color:'#fb923c' },
+];
+
+// type: mc | tf | text | order | match
+const ALL_QUESTIONS = [
+  // ── INTRO ──
+  { cat:'intro', type:'mc', pts:100,
+    q:'¿Cuál es la función principal de un Sistema Operativo?',
+    opts:['Ejecutar solo programas de Microsoft','Actuar como intermediario entre el usuario y el hardware','Gestionar únicamente la memoria RAM','Controlar el acceso a internet'],
+    correct:1,
+    exp:'El SO es el intermediario entre software y hardware: gestiona recursos, provee abstracciones y protege el sistema.' },
+  { cat:'intro', type:'tf', pts:80,
+    q:'El kernel de un Sistema Operativo se ejecuta en modo usuario con los mismos privilegios que las aplicaciones normales.',
+    correct:false,
+    exp:'El kernel corre en modo privilegiado (ring 0), con acceso total al hardware. Las apps corren en modo usuario con acceso restringido.' },
+  { cat:'intro', type:'mc', pts:100,
+    q:'¿Qué mecanismo permite a un programa de usuario solicitar servicios al kernel?',
+    opts:['Interrupciones de hardware','System Calls (llamadas al sistema)','Señales POSIX','DMA'],
+    correct:1,
+    exp:'Las System Calls son la API del SO. Permiten al programa de usuario pedir servicios privilegiados al kernel de forma controlada.' },
+  { cat:'intro', type:'tf', pts:80,
+    q:'Un SO de tiempo real (RTOS) garantiza que las tareas se completen dentro de plazos de tiempo estrictos.',
+    correct:true,
+    exp:'Los RTOS como FreeRTOS o VxWorks garantizan tiempos de respuesta deterministas, críticos en sistemas embebidos.' },
+  { cat:'intro', type:'text', pts:150, keyword:['intermediario','recursos','hardware','abstraccion','kernel'],
+    q:'Explica con tus propias palabras qué es un Sistema Operativo y menciona al menos dos de sus funciones principales.',
+    exp:'El SO actúa como intermediario entre el usuario/aplicaciones y el hardware. Sus funciones: gestión de recursos (CPU, memoria, E/S), abstracción del hardware, seguridad y protección.' },
+
+  // ── ARQUITECTURA ──
+  { cat:'arch', type:'mc', pts:100,
+    q:'¿Cuál es la diferencia entre un kernel monolítico y un microkernel?',
+    opts:['El monolítico es más pequeño','En el microkernel todos los servicios corren en espacio de usuario excepto lo esencial','El microkernel usa más memoria','No existe diferencia real'],
+    correct:1,
+    exp:'Microkernel: solo servicios mínimos en ring 0 (IPC, scheduler básico). El resto (drivers, FS) son procesos de usuario. Linux usa kernel monolítico modular.' },
+  { cat:'arch', type:'order', pts:120,
+    q:'Ordena estas capas del SO de más alta abstracción (usuario) a más baja (hardware):',
+    items:['Aplicaciones de Usuario','System Calls / API','Kernel','Hardware (CPU/RAM/Disco)','Programas del Sistema'],
+    correct:[0,4,1,2,3],
+    exp:'Usuario → Aplicaciones → Programas del Sistema → System Calls → Kernel → Hardware' },
+  { cat:'arch', type:'tf', pts:80,
+    q:'El modo dual (usuario/kernel) existe principalmente para mejorar el rendimiento del sistema.',
+    correct:false,
+    exp:'El modo dual existe para PROTECCIÓN y seguridad, no rendimiento. Evita que apps accedan directamente al hardware.' },
+  { cat:'arch', type:'mc', pts:100,
+    q:'¿Qué es el DMA (Direct Memory Access)?',
+    opts:['Un tipo de caché L1','Un mecanismo que permite a dispositivos transferir datos a RAM sin pasar por la CPU','Un protocolo de red del kernel','Un algoritmo de planificación'],
+    correct:1,
+    exp:'DMA permite que periféricos (disco, red) transfieran datos a la RAM directamente, liberando la CPU para otras tareas.' },
+  { cat:'arch', type:'text', pts:150, keyword:['system call','interrupcion','trap','privilegio','kernel'],
+    q:'¿Cómo ocurre una system call? Describe el flujo desde que la aplicación la llama hasta que el kernel responde.',
+    exp:'La app ejecuta una instrucción especial (trap/syscall). La CPU cambia a modo kernel. El kernel ejecuta el servicio. Retorna al modo usuario con el resultado.' },
+
+  // ── PROCESOS ──
+  { cat:'proc', type:'mc', pts:100,
+    q:'¿Cuántos estados tiene un proceso en el modelo de 5 estados?',
+    opts:['3','4','5','7'],
+    correct:2,
+    exp:'Nuevo, Listo, Ejecutando, Esperando/Bloqueado y Terminado. Son los 5 estados clásicos del ciclo de vida de un proceso.' },
+  { cat:'proc', type:'match', pts:130,
+    q:'Relaciona cada estado del proceso con su descripción:',
+    pairs:[
+      ['Nuevo','El proceso acaba de ser creado, aún no en RAM'],
+      ['Listo','Espera turno de CPU, tiene todos sus recursos'],
+      ['Ejecutando','Actualmente usando la CPU'],
+      ['Bloqueado','Espera un evento de E/S o recurso'],
+    ],
+    exp:'Nuevo→creado, Listo→esperando CPU, Ejecutando→en CPU, Bloqueado→esperando E/S.' },
+  { cat:'proc', type:'tf', pts:80,
+    q:'Un proceso hijo creado con fork() hereda una copia exacta del espacio de memoria del proceso padre.',
+    correct:true,
+    exp:'fork() crea una copia del espacio de direcciones del padre (copy-on-write en sistemas modernos). Hijo y padre son independientes.' },
+  { cat:'proc', type:'mc', pts:100,
+    q:'¿Qué almacena el PCB (Process Control Block)?',
+    opts:['Solo el código del programa','El estado completo del proceso: registros, PID, estado, memoria, archivos abiertos','Solo el PID y prioridad','La tabla de páginas virtual únicamente'],
+    correct:1,
+    exp:'El PCB guarda TODO el contexto del proceso: PID, estado, contador de programa, registros, info de memoria, recursos, etc.' },
+  { cat:'proc', type:'text', pts:150, keyword:['hilo','thread','proceso','memoria','compartida','ligero'],
+    q:'¿Qué diferencia hay entre un proceso y un hilo (thread)? ¿Cuándo usarías uno u otro?',
+    exp:'Los hilos comparten el espacio de memoria del proceso (más ligeros). Procesos tienen memoria separada (más seguros). Hilos para tareas paralelas del mismo programa; procesos para aislamiento.' },
+
+  // ── MEMORIA ──
+  { cat:'mem', type:'mc', pts:100,
+    q:'¿Qué problema resuelve la memoria virtual?',
+    opts:['Aumenta la velocidad de la RAM','Permite ejecutar programas más grandes que la RAM física disponible','Elimina la necesidad de caché','Acelera el acceso a disco'],
+    correct:1,
+    exp:'La memoria virtual crea una ilusión de RAM infinita usando disco. Permite ejecutar programas que exceden la RAM física mediante paginación.' },
+  { cat:'mem', type:'order', pts:120,
+    q:'Ordena la jerarquía de memoria de más rápida/pequeña a más lenta/grande:',
+    items:['Disco HDD/SSD','Registros CPU','RAM (DRAM)','Caché L1/L2/L3'],
+    correct:[1,3,2,0],
+    exp:'Registros (ps) → Caché L1/L2/L3 (ns) → RAM (ns-μs) → Disco (ms)' },
+  { cat:'mem', type:'tf', pts:80,
+    q:'En la paginación, el sistema operativo divide la memoria en fragmentos de tamaño variable llamados páginas.',
+    correct:false,
+    exp:'En paginación los fragmentos son de tamaño FIJO. La segmentación usa tamaño variable.' },
+  { cat:'mem', type:'mc', pts:100,
+    q:'¿Qué es el "thrashing" en gestión de memoria?',
+    opts:['Un tipo de fragmentación de disco','Cuando el SO pasa más tiempo paginando que ejecutando procesos','Un algoritmo de reemplazo de páginas','Un error de página crítico'],
+    correct:1,
+    exp:'Thrashing: el SO está constantemente intercambiando páginas (swap) porque hay más procesos de los que la RAM puede sostener. CPU utilización cae en picado.' },
+  { cat:'mem', type:'text', pts:150, keyword:['pagina','fallo','tlb','tabla','fisica','virtual'],
+    q:'Explica qué sucede cuando ocurre un "page fault" (fallo de página). ¿Cómo lo maneja el SO?',
+    exp:'El proceso accede a una página no en RAM. La CPU genera una excepción. El SO localiza la página en disco, carga una nueva página (posiblemente reemplazando otra), actualiza la tabla de páginas y retoma el proceso.' },
+
+  // ── PLANIFICACIÓN ──
+  { cat:'sched', type:'mc', pts:100,
+    q:'¿Cuál algoritmo de planificación puede causar "inanición" (starvation)?',
+    opts:['Round Robin','FCFS','SJF (Shortest Job First) no apropiativo','Multilevel Queue con feedback'],
+    correct:2,
+    exp:'SJF prioriza procesos cortos. Procesos largos pueden esperar indefinidamente si siempre llegan procesos más cortos = inanición.' },
+  { cat:'sched', type:'match', pts:130,
+    q:'Relaciona el algoritmo con su característica principal:',
+    pairs:[
+      ['FCFS','Primero en llegar, primero en ser atendido'],
+      ['Round Robin','Quantum de tiempo igual para todos'],
+      ['SJF','El proceso más corto va primero'],
+      ['Priority','Se atiende según valor numérico de prioridad'],
+    ],
+    exp:'FCFS=cola simple, RR=quantum, SJF=más corto primero, Priority=prioridad numérica.' },
+  { cat:'sched', type:'tf', pts:80,
+    q:'Round Robin es siempre el algoritmo de planificación más eficiente en términos de tiempo de espera promedio.',
+    correct:false,
+    exp:'RR es justo pero no necesariamente el más eficiente. SJF tiene el menor tiempo de espera promedio teórico. RR tiene overhead por context switch.' },
+  { cat:'sched', type:'mc', pts:100,
+    q:'En Round Robin con quantum=2ms, si P1 llega en t=0 (burst=5ms) y P2 en t=1 (burst=3ms), ¿cuándo termina P2?',
+    opts:['t=4ms','t=6ms','t=7ms','t=8ms'],
+    correct:2,
+    exp:'t=0: P1 corre 2ms → t=2. P2 corre 2ms → t=4. P1 corre 2ms → t=6. P2 corre 1ms → t=7. P2 termina en t=7.' },
+  { cat:'sched', type:'text', pts:150, keyword:['turnaround','espera','waiting','tiempo','promedio','calculo'],
+    q:'Define los términos "tiempo de espera" (waiting time) y "tiempo de retorno" (turnaround time) en planificación de CPU.',
+    exp:'Waiting time = tiempo que el proceso espera en la cola de listos (sin ejecutar). Turnaround = tiempo total desde llegada hasta finalización = waiting + burst time.' },
+
+  // ── SINCRONIZACIÓN ──
+  { cat:'sync', type:'mc', pts:100,
+    q:'¿Qué condición describe una "sección crítica"?',
+    opts:['Código que solo puede ejecutar el kernel','Región de código donde se accede a recursos compartidos y debe ejecutarse de forma atómica','Un área de memoria protegida del SO','Un proceso con alta prioridad'],
+    correct:1,
+    exp:'Sección crítica: fragmento de código que accede a recursos compartidos. Solo un proceso puede estar en ella a la vez para evitar condiciones de carrera.' },
+  { cat:'sync', type:'tf', pts:80,
+    q:'Un mutex (mutual exclusion) puede ser liberado por un hilo diferente al que lo adquirió.',
+    correct:false,
+    exp:'Un mutex tiene "ownership": solo el hilo que lo adquirió puede liberarlo. Los semáforos binarios sí pueden ser señalizados por otro hilo.' },
+  { cat:'sync', type:'mc', pts:120,
+    q:'¿Cuál de las siguientes NO es una condición para garantizar exclusión mutua correcta?',
+    opts:['Exclusión mutua: solo un proceso en sección crítica','Progreso: si nadie está en SC, cualquier proceso puede entrar','Espera acotada: límite en veces que otros entran antes','Alta velocidad de ejecución del proceso'],
+    correct:3,
+    exp:'Las 3 condiciones de Peterson/Dijkstra son: exclusión mutua, progreso y espera acotada. La velocidad no es un requisito formal.' },
+  { cat:'sync', type:'text', pts:150, keyword:['semaforo','mutex','monitor','lock','signal','wait'],
+    q:'Explica qué es una condición de carrera (race condition) y cómo los semáforos ayudan a prevenirla.',
+    exp:'Race condition: resultado depende del orden de ejecución de hilos concurrentes. Semáforo: variable entera con operaciones atómicas wait() y signal(). Wait() decrementa/bloquea; signal() incrementa/desbloquea. Garantizan acceso mutuamente exclusivo.' },
+  { cat:'sync', type:'match', pts:130,
+    q:'Relaciona el concepto de sincronización con su descripción:',
+    pairs:[
+      ['Mutex','Exclusión mutua con ownership del hilo'],
+      ['Semáforo','Variable entera con wait() y signal()'],
+      ['Monitor','Abstracción de alto nivel con variables de condición'],
+      ['Spinlock','Espera activa hasta obtener el lock'],
+    ],
+    exp:'Mutex=ownership, Semáforo=contador atómico, Monitor=abstracción OO, Spinlock=busy waiting.' },
+
+  // ── DEADLOCK ──
+  { cat:'dead', type:'mc', pts:100,
+    q:'¿Cuántas condiciones de Coffman deben cumplirse SIMULTÁNEAMENTE para que ocurra un deadlock?',
+    opts:['Solo 1','2 de 4','3 de 4','Las 4 condiciones'],
+    correct:3,
+    exp:'Las 4 condiciones de Coffman (exclusión mutua, retener y esperar, no apropiación, espera circular) deben darse todas simultáneamente para deadlock.' },
+  { cat:'dead', type:'match', pts:130,
+    q:'Relaciona cada condición de Coffman con su descripción:',
+    pairs:[
+      ['Exclusión Mutua','Solo un proceso puede usar el recurso a la vez'],
+      ['Retener y Esperar','Un proceso tiene recursos mientras espera otros'],
+      ['No Apropiación','Un recurso no puede quitársele a un proceso por la fuerza'],
+      ['Espera Circular','Existe una cadena circular de procesos esperándose mutuamente'],
+    ],
+    exp:'Las 4 condiciones deben ocurrir simultáneamente para deadlock.' },
+  { cat:'dead', type:'tf', pts:80,
+    q:'El algoritmo del banquero puede prevenir deadlocks en tiempo real sin degradar el rendimiento del sistema.',
+    correct:false,
+    exp:'El algoritmo del banquero EVITA deadlocks pero tiene overhead significativo. Requiere conocer de antemano los recursos máximos de cada proceso, lo que es impráctico en muchos sistemas reales.' },
+  { cat:'dead', type:'mc', pts:120,
+    q:'¿Cuál técnica de manejo de deadlock tiene el menor costo de implementación pero el mayor riesgo?',
+    opts:['Prevención de deadlock','Detección y recuperación','Algoritmo del banquero','Ignorar el problema (Algoritmo del avestruz)'],
+    correct:3,
+    exp:'El "algoritmo del avestruz" ignora el deadlock. Bajo costo, alto riesgo. Usado en UNIX/Linux cuando la probabilidad de deadlock es baja.' },
+  { cat:'dead', type:'text', pts:150, keyword:['prevencion','evitar','detectar','recuperar','coffman','recurso'],
+    q:'Menciona y explica brevemente las cuatro estrategias para manejar deadlocks en un SO.',
+    exp:'1) Prevención: eliminar al menos 1 condición de Coffman. 2) Evitación: algoritmo del banquero, nunca estado inseguro. 3) Detección: detectar deadlock y recuperar (matar proceso, arrebatar recurso). 4) Ignorar: asumir que no ocurrirá (avestruz).' },
+
+  // ── SISTEMA DE ARCHIVOS ──
+  { cat:'fs', type:'mc', pts:100,
+    q:'¿Qué estructura del sistema de archivos almacena los metadatos de un archivo en sistemas UNIX?',
+    opts:['FAT (File Allocation Table)','Inodo (inode)','MFT (Master File Table)','Directorio raíz'],
+    correct:1,
+    exp:'El inodo almacena metadatos: permisos, dueño, tamaño, timestamps, y punteros a bloques de datos. El nombre del archivo está en el directorio.' },
+  { cat:'fs', type:'tf', pts:80,
+    q:'En un sistema UNIX, el nombre de un archivo se almacena dentro de su propio inodo.',
+    correct:false,
+    exp:'El nombre del archivo está en el directorio (como entrada: nombre → número de inodo). El inodo no contiene el nombre, solo metadatos y punteros a datos.' },
+  { cat:'fs', type:'mc', pts:100,
+    q:'¿Qué significa que un sistema de archivos sea "journaling"?',
+    opts:['Que registra un log de transacciones para recuperarse de fallos','Que comprime los archivos automáticamente','Que fragmenta el disco en particiones','Que usa encriptación por defecto'],
+    correct:0,
+    exp:'Journaling (ext4, NTFS): registra operaciones antes de realizarlas. Si el sistema falla, puede reproducir el log para mantener consistencia.' },
+  { cat:'fs', type:'order', pts:120,
+    q:'Ordena las capas de un sistema de archivos de más alta a más baja:',
+    items:['Driver de dispositivo (disco)','Interfaz de usuario (open/read/write)','Sistema de archivos lógico','Organización física de bloques'],
+    correct:[1,2,3,0],
+    exp:'API de usuario → FS lógico (inodos, dirs) → Organización de bloques → Driver de dispositivo' },
+  { cat:'fs', type:'text', pts:150, keyword:['fragmentacion','bloque','inodo','directorio','montaje','particion'],
+    q:'Explica qué es la fragmentación en sistemas de archivos y cómo afecta el rendimiento.',
+    exp:'Fragmentación: archivos almacenados en bloques no contiguos. Externa: espacio libre disperso. Interna: bloques parcialmente llenos. El HDD pierde rendimiento por movimiento del cabezal. Los SSD no se ven tan afectados.' },
+];
+
+// ══════════ GAME STATE ══════════
+let difficulty = 'normal';
+let score = 0;
+let streak = 0;
+let maxStreak = 0;
+let totalCorrect = 0;
+let totalQuestions = 0;
+let currentCatId = null;
+let currentQIdx = 0;
+let catQuestions = [];
+let timer = null;
+let timeLeft = 20;
+let gameStartTime = 0;
+let catScores = {};
+let catAttempts = {};
+let completedCats = new Set();
+let answered = false;
+
+// Match state
+let matchLeft = null;
+
+// Order drag state
+let dragSrc = null;
+
+const DIFF_TIME = { normal:20, hard:12, zen:999 };
+
+function selectDiff(el) {
+  document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
+  el.classList.add('selected');
+  difficulty = el.dataset.diff;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showCategories() {
+  gameStartTime = Date.now();
+  buildCatGrid();
+  showScreen('screen-categories');
+}
+
+function buildCatGrid() {
+  const g = document.getElementById('catGrid');
+  g.innerHTML = CATEGORIES.map((c, i) => {
+    const done = completedCats.has(c.id);
+    const qs = ALL_QUESTIONS.filter(q => q.cat === c.id).length;
+    return `<div class="cat-card cat-${i} ${done?'completed':''}" onclick="startCategory('${c.id}')">
+      <span class="cat-icon">${c.icon}</span>
+      <div class="cat-name">${c.name}</div>
+      <div class="cat-count">${qs} preguntas</div>
+      <div class="cat-progress-bar">
+        <div class="cat-progress-fill" style="width:${done?100:0}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function startCategory(catId) {
+  currentCatId = catId;
+  currentQIdx = 0;
+  catQuestions = ALL_QUESTIONS.filter(q => q.cat === catId);
+  // Shuffle
+  catQuestions = catQuestions.sort(() => Math.random() - 0.5);
+  if (!catScores[catId]) catScores[catId] = 0;
+  if (!catAttempts[catId]) catAttempts[catId] = { c:0, t:0 };
+  showScreen('screen-game');
+  showQuestion();
+}
+
+function showQuestion() {
+  if (currentQIdx >= catQuestions.length) {
+    completedCats.add(currentCatId);
+    if (completedCats.size >= CATEGORIES.length) {
+      showResults();
+    } else {
+      buildCatGrid();
+      showScreen('screen-categories');
+    }
+    return;
+  }
+
+  answered = false;
+  const q = catQuestions[currentQIdx];
+  const cat = CATEGORIES.find(c => c.id === currentCatId);
+
+  // Header
+  document.getElementById('qCatBadge').textContent = cat.name.toUpperCase();
+  const typeBadge = document.getElementById('qTypeBadge');
+  const typeMap = { mc:'OPCIÓN MÚLTIPLE', tf:'VERDADERO/FALSO', text:'ESCRITURA LIBRE', order:'ORDENAR', match:'RELACIONAR' };
+  const typeClass = { mc:'type-mc', tf:'type-tf', text:'type-text', order:'type-order', match:'type-match' };
+  typeBadge.textContent = typeMap[q.type];
+  typeBadge.className = 'q-type-badge ' + typeClass[q.type];
+
+  document.getElementById('qCounter').textContent = `${currentQIdx+1} / ${catQuestions.length}`;
+  document.getElementById('qPoints').textContent = `⭐ ${q.pts} pts`;
+  document.getElementById('qText').innerHTML = q.q;
+
+  // Progress bar
+  const total = Object.keys(catScores).length * 5 + currentQIdx;
+  document.getElementById('progressBar').style.width = Math.min((totalQuestions / ALL_QUESTIONS.length) * 100, 100) + '%';
+
+  // Feedback reset
+  const fb = document.getElementById('feedbackBox');
+  fb.className = 'feedback-box';
+  document.getElementById('nextBtn').className = 'next-btn';
+
+  // Render body
+  const body = document.getElementById('qBody');
+  if (q.type === 'mc') {
+    body.innerHTML = `<div class="options-list">${
+      q.opts.map((o,i) => `<button class="option-btn" onclick="checkMC(this,${i},${q.correct},'${esc(q.exp)}',${q.pts})">
+        <span class="option-key">${String.fromCharCode(65+i)}</span>${o}
+      </button>`).join('')
+    }</div>`;
+  } else if (q.type === 'tf') {
+    body.innerHTML = `<div class="tf-row">
+      <button class="tf-btn tf-true" onclick="checkTF(this,true,${q.correct},'${esc(q.exp)}',${q.pts})">✅ Verdadero</button>
+      <button class="tf-btn tf-false" onclick="checkTF(this,false,${q.correct},'${esc(q.exp)}',${q.pts})">❌ Falso</button>
+    </div>`;
+  } else if (q.type === 'text') {
+    body.innerHTML = `<div class="text-area-wrap">
+      <textarea class="text-input" id="textInput" placeholder="Escribe tu respuesta aquí…" rows="4"></textarea>
+      <div class="text-hint">// Palabras clave a incluir: ${q.keyword.join(', ')}</div>
+      <button class="submit-text-btn" id="textSubmitBtn" onclick="checkText(${q.pts})">VERIFICAR RESPUESTA</button>
+    </div>`;
+  } else if (q.type === 'order') {
+    renderOrder(q, body);
+  } else if (q.type === 'match') {
+    renderMatch(q, body);
+    matchLeft = null;
+  }
+
+  startTimer(q);
+}
+
+function esc(s) { return s.replace(/'/g,"'").replace(/"/g,'\\"'); }
+
+// ── MC ──
+function checkMC(btn, chosen, correct, exp, pts) {
+  if (answered) return;
+  answered = true;
+  clearTimer();
+  const btns = btn.closest('.options-list').querySelectorAll('.option-btn');
+  btns.forEach((b,i) => { b.disabled = true; if(i===correct) b.classList.add('correct'); });
+  const ok = chosen === correct;
+  if (!ok) btn.classList.add('wrong');
+  resolve(ok, pts, exp, ok ? null : `Respuesta correcta: ${String.fromCharCode(65+correct)}`);
+}
+
+// ── TF ──
+function checkTF(btn, chosen, correct, exp, pts) {
+  if (answered) return;
+  answered = true;
+  clearTimer();
+  btn.closest('.tf-row').querySelectorAll('.tf-btn').forEach(b => b.disabled = true);
+  const ok = chosen === correct;
+  btn.classList.add(ok ? 'correct' : 'wrong');
+  if (!ok) {
+    const other = btn.closest('.tf-row').querySelector(correct ? '.tf-true' : '.tf-false');
+    if (other) other.classList.add('correct');
+  }
+  resolve(ok, pts, exp, null);
+}
+
+// ── TEXT ──
+function checkText(pts) {
+  if (answered) return;
+  const val = document.getElementById('textInput').value.trim().toLowerCase();
+  const q = catQuestions[currentQIdx];
+  if (val.length < 15) { alert('Escribe una respuesta más completa.'); return; }
+  answered = true;
+  clearTimer();
+  document.getElementById('textSubmitBtn').disabled = true;
+  document.getElementById('textInput').disabled = true;
+  // Count keyword matches
+  const hits = q.keyword.filter(k => val.includes(k.toLowerCase())).length;
+  const ratio = hits / q.keyword.length;
+  const ok = ratio >= 0.4;
+  const partialPts = Math.round(pts * ratio);
+  resolve(ok, partialPts, q.exp, `Palabras clave encontradas: ${hits}/${q.keyword.length}. Puntos: ${partialPts}`);
+}
+
+// ── ORDER ──
+function renderOrder(q, body) {
+  let items = [...q.items].map((t,i)=>({t,origIdx:i})).sort(()=>Math.random()-0.5);
+  body.innerHTML = `<div class="order-list" id="orderList">${
+    items.map((it,i)=>`<div class="order-item" draggable="true" data-orig="${it.origIdx}">
+      <span class="order-handle">⠿</span>
+      <span class="order-num">${i+1}</span>
+      <span>${it.t}</span>
+    </div>`).join('')
+  }</div>
+  <button class="submit-order-btn" onclick="checkOrder(${JSON.stringify(q.correct).replace(/"/g,"'")}, '${esc(q.exp)}', ${q.pts})">VERIFICAR ORDEN</button>`;
+  initDrag();
+}
+
+function initDrag() {
+  const list = document.getElementById('orderList');
+  if (!list) return;
+  list.querySelectorAll('.order-item').forEach(item => {
+    item.addEventListener('dragstart', e => { dragSrc = item; item.classList.add('dragging'); });
+    item.addEventListener('dragend', () => { item.classList.remove('dragging'); document.querySelectorAll('.order-item').forEach(i=>i.classList.remove('drag-over')); updateOrderNums(); });
+    item.addEventListener('dragover', e => { e.preventDefault(); item.classList.add('drag-over'); });
+    item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
+    item.addEventListener('drop', e => {
+      e.preventDefault();
+      if (dragSrc !== item) {
+        const items = [...list.querySelectorAll('.order-item')];
+        const srcIdx = items.indexOf(dragSrc);
+        const dstIdx = items.indexOf(item);
+        if (srcIdx < dstIdx) list.insertBefore(dragSrc, item.nextSibling);
+        else list.insertBefore(dragSrc, item);
+      }
+    });
+    // Touch support
+    item.addEventListener('touchstart', e => { dragSrc = item; item.classList.add('dragging'); }, {passive:true});
+    item.addEventListener('touchend', () => { item.classList.remove('dragging'); updateOrderNums(); });
+  });
+}
+
+function updateOrderNums() {
+  document.querySelectorAll('#orderList .order-num').forEach((n,i) => n.textContent = i+1);
+}
+
+function checkOrder(correct, exp, pts) {
+  if (answered) return;
+  answered = true;
+  clearTimer();
+  const list = document.getElementById('orderList');
+  const items = [...list.querySelectorAll('.order-item')];
+  const current = items.map(i => +i.dataset.orig);
+  let matches = 0;
+  current.forEach((v,i) => { if(v===correct[i]) matches++; });
+  const ok = matches === correct.length;
+  const partial = Math.round(pts * (matches / correct.length));
+  list.querySelectorAll('.order-item').forEach(item => item.style.pointerEvents = 'none');
+  resolve(ok, partial, exp, `Posiciones correctas: ${matches}/${correct.length}`);
+}
+
+// ── MATCH ──
+function renderMatch(q, body) {
+  const lefts = q.pairs.map(p=>p[0]).sort(()=>Math.random()-0.5);
+  const rights = q.pairs.map(p=>p[1]).sort(()=>Math.random()-0.5);
+  body.innerHTML = `<div class="match-grid">
+    <div class="match-col">
+      <div class="match-col-label">Concepto</div>
+      ${lefts.map((l,i)=>`<div class="match-item selectable" id="ml-${i}" data-val="${l}" onclick="selectLeft(this)">${l}</div>`).join('')}
+    </div>
+    <div class="match-col">
+      <div class="match-col-label">Descripción</div>
+      ${rights.map((r,i)=>`<div class="match-item selectable" id="mr-${i}" data-val="${r}" onclick="selectRight(this,'${esc(q.exp)}',${q.pts},${q.pairs.length})">${r}</div>`).join('')}
+    </div>
+  </div>`;
+  window._matchPairs = Object.fromEntries(q.pairs);
+  window._matchTotal = q.pairs.length;
+  window._matchCorrect = 0;
+}
+
+function selectLeft(el) {
+  if (el.classList.contains('matched-ok') || el.classList.contains('disabled')) return;
+  document.querySelectorAll('.match-item[id^="ml-"]').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+  matchLeft = el;
+}
+
+function selectRight(el, exp, pts, total) {
+  if (!matchLeft) return;
+  if (el.classList.contains('matched-ok') || el.classList.contains('disabled')) return;
+
+  const leftVal = matchLeft.dataset.val;
+  const rightVal = el.dataset.val;
+  const ok = window._matchPairs[leftVal] === rightVal;
+
+  if (ok) {
+    matchLeft.classList.remove('selected');
+    matchLeft.classList.add('matched-ok', 'disabled');
+    el.classList.add('matched-ok', 'disabled');
+    window._matchCorrect++;
+    matchLeft = null;
+    // Flash score
+    const partial = Math.round(pts / total);
+    showPtsPopup(partial, true);
+    score += partial; totalCorrect += 0;
+    document.getElementById('hudScore').textContent = score;
+
+    if (window._matchCorrect === total) {
+      answered = true;
+      clearTimer();
+      totalCorrect++; catAttempts[currentCatId].c++; catAttempts[currentCatId].t++;
+      totalQuestions++;
+      streakUp();
+      showFeedback(true, 'match', exp, null, pts);
+      document.getElementById('nextBtn').className = 'next-btn show';
+    }
+  } else {
+    matchLeft.classList.add('wrong');
+    el.classList.add('wrong');
+    setTimeout(() => {
+      matchLeft.classList.remove('wrong','selected');
+      el.classList.remove('wrong');
+      matchLeft = null;
+    }, 500);
+  }
+}
+
+// ── RESOLVE ──
+function resolve(ok, pts, exp, corrNote) {
+  if (ok) {
+    score += pts;
+    totalCorrect++;
+    catAttempts[currentCatId].c++;
+    streakUp();
+    showPtsPopup(pts, true);
+  } else {
+    streakReset();
+    showPtsPopup(0, false);
+  }
+  catAttempts[currentCatId].t++;
+  totalQuestions++;
+  catScores[currentCatId] = (catScores[currentCatId]||0) + (ok ? pts : 0);
+  document.getElementById('hudScore').textContent = score;
+  showFeedback(ok, 'normal', exp, corrNote, pts);
+  document.getElementById('nextBtn').className = 'next-btn show';
+}
+
+function showFeedback(ok, mode, exp, corrNote, pts) {
+  const fb = document.getElementById('feedbackBox');
+  document.getElementById('fbHead').textContent = ok ? '✅ ¡Correcto!' : '❌ Incorrecto';
+  document.getElementById('fbBody').textContent = exp;
+  document.getElementById('fbCorrect').textContent = corrNote || '';
+  fb.className = `feedback-box show ${ok ? 'ok' : 'fail'}`;
+}
+
+// ── TIMER ──
+function startTimer(q) {
+  clearTimer();
+  if (difficulty === 'zen') { document.getElementById('timerWrap').style.display='none'; return; }
+  document.getElementById('timerWrap').style.display='flex';
+  timeLeft = DIFF_TIME[difficulty];
+  updateTimerUI();
+  timer = setInterval(() => {
+    timeLeft--;
+    updateTimerUI();
+    if (timeLeft <= 0) {
+      clearTimer();
+      if (!answered) timeUp();
+    }
+  }, 1000);
+}
+
+function clearTimer() { if(timer){clearInterval(timer);timer=null;} }
+
+function updateTimerUI() {
+  const max = DIFF_TIME[difficulty];
+  const r = 16, circum = 2*Math.PI*r;
+  const offset = circum * (1 - timeLeft/max);
+  const circle = document.getElementById('timerCircle');
+  circle.style.strokeDashoffset = offset;
+  circle.style.stroke = timeLeft <= 5 ? '#ef4444' : timeLeft <= 10 ? '#f59e0b' : '#00e5ff';
+  document.getElementById('timerNum').textContent = timeLeft;
+}
+
+function timeUp() {
+  answered = true;
+  const q = catQuestions[currentQIdx];
+  catAttempts[currentCatId] = catAttempts[currentCatId] || {c:0,t:0};
+  catAttempts[currentCatId].t++;
+  totalQuestions++;
+  streakReset();
+  showFeedback(false, 'normal', q.exp, '⏱ Tiempo agotado', 0);
+  document.getElementById('nextBtn').className = 'next-btn show';
+  // Disable all inputs
+  document.querySelectorAll('.option-btn, .tf-btn, .submit-text-btn, .submit-order-btn').forEach(b=>b.disabled=true);
+}
+
+function nextQuestion() {
+  currentQIdx++;
+  showQuestion();
+}
+
+// ── STREAK ──
+function streakUp() {
+  streak++;
+  if (streak > maxStreak) maxStreak = streak;
+  document.getElementById('hudStreak').textContent = streak;
+  if (streak >= 3 && streak % 1 === 0) {
+    const badge = document.getElementById('streakBadge');
+    badge.textContent = `🔥 ¡Racha x${streak}!`;
+    badge.style.display = 'block';
+    setTimeout(() => badge.style.display='none', 2000);
+  }
+}
+function streakReset() {
+  streak = 0;
+  document.getElementById('hudStreak').textContent = 0;
+}
+
+// ── PTS POPUP ──
+function showPtsPopup(pts, ok) {
+  const el = document.getElementById('ptsPopup');
+  el.textContent = ok ? `+${pts}` : '×';
+  el.style.color = ok ? '#00e5ff' : '#ef4444';
+  el.className = 'pts-popup';
+  void el.offsetWidth;
+  el.classList.add('show');
+}
+
+// ── RESULTS ──
+function showResults() {
+  clearTimer();
+  const elapsed = Math.round((Date.now() - gameStartTime) / 1000);
+  const acc = totalQuestions > 0 ? Math.round((totalCorrect/totalQuestions)*100) : 0;
+
+  document.getElementById('resPts').textContent = score;
+  document.getElementById('resAcc').textContent = acc + '%';
+  document.getElementById('resStreak').textContent = maxStreak;
+  document.getElementById('resTime').textContent = elapsed + 's';
+
+  // Trophy / message
+  let trophy='🏆', title='Resultado', msg='';
+  if (acc >= 90) { trophy='🏆'; title='¡Maestro del SO!'; msg='Dominas todos los conceptos. ¡Excelente!'; }
+  else if (acc >= 70) { trophy='🌟'; title='¡Muy Bien!'; msg='Buen dominio. Repasa los temas fallados.'; }
+  else if (acc >= 50) { trophy='📚'; title='Aprendiendo'; msg='Vas por buen camino. Sigue estudiando.'; }
+  else { trophy='💪'; title='¡Sigue Practicando!'; msg='Repasa los temas y vuelve a intentarlo.'; }
+
+  document.getElementById('trophy').textContent = trophy;
+  document.getElementById('resultsTitle').textContent = title;
+  document.getElementById('resultsMsg').textContent = msg;
+  document.getElementById('progressBar').style.width = '100%';
+
+  // Category breakdown
+  const bd = document.getElementById('catBreakdown');
+  bd.innerHTML = `<div class="breakdown-title">// Rendimiento por categoría</div>` +
+    CATEGORIES.map(c => {
+      const att = catAttempts[c.id] || {c:0,t:0};
+      const pct = att.t > 0 ? Math.round((att.c/att.t)*100) : 0;
+      const color = pct>=80?'#10b981':pct>=50?'#f59e0b':'#ef4444';
+      return `<div class="breakdown-row">
+        <div class="breakdown-name">${c.icon} ${c.name}</div>
+        <div class="breakdown-bar-wrap"><div class="breakdown-bar" style="width:${pct}%;background:${color}"></div></div>
+        <div class="breakdown-pct">${pct}%</div>
+      </div>`;
+    }).join('');
+
+  showScreen('screen-results');
+  if (acc >= 70) launchConfetti();
+}
+
+function launchConfetti() {
+  const colors = ['#00e5ff','#7c3aed','#10b981','#f59e0b','#ef4444','#e879f9'];
+  for (let i=0;i<60;i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.style.left = Math.random()*100+'vw';
+      el.style.top = '-10px';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.transform = `rotate(${Math.random()*360}deg)`;
+      el.style.animationDuration = (2+Math.random()*3)+'s';
+      el.style.animationDelay = (Math.random()*0.5)+'s';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }, i*60);
+  }
+}
+
+function restartGame() {
+  score=0; streak=0; maxStreak=0; totalCorrect=0; totalQuestions=0;
+  catScores={}; catAttempts={}; completedCats=new Set();
+  document.getElementById('hudScore').textContent=0;
+  document.getElementById('hudStreak').textContent=0;
+  document.getElementById('progressBar').style.width='0%';
+  gameStartTime = Date.now();
+  buildCatGrid();
+  showScreen('screen-categories');
+}
+</script>
+</body>
+</html>
